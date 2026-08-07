@@ -1,0 +1,19 @@
+{
+  "row_count": 539747,
+  "flight_status_counts": {
+    "completed": 522269,
+    "cancelled": 16312,
+    "diverted": 1166
+  },
+  "cancelled_and_diverted_rows": 0,
+  "cancellation_code_relationship": {
+    "cancelled_rows": 16312,
+    "cancelled_with_code": 16312,
+    "cancelled_without_code": 0,
+    "non_cancelled_with_code": 0,
+    "non_cancelled_without_code": 523435
+  },
+  "diversion_crosstab_output": "analysis\\profiling\\january_2025_diversion_landing_crosstab.csv",
+  "operational_null_output": "analysis\\profiling\\january_2025_operational_nulls_by_status.csv",
+  "delay_cause_output": "analysis\\profiling\\january_2025_delay_cause_population.csv"
+}

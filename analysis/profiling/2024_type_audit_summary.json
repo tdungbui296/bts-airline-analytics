@@ -1,0 +1,26 @@
+{
+  "input_file_count": 12,
+  "expected_total_rows": 7079061,
+  "audited_total_rows": 7079061,
+  "row_count_reconciled": true,
+  "audited_column_count": 51,
+  "passed_column_count": 51,
+  "review_column_count": 0,
+  "review_columns": [],
+  "all_proposed_types_safe": true,
+  "monthly_row_counts": {
+    "bts_2024_01_core.csv.gz": 547271,
+    "bts_2024_02_core.csv.gz": 519221,
+    "bts_2024_03_core.csv.gz": 591767,
+    "bts_2024_04_core.csv.gz": 582185,
+    "bts_2024_05_core.csv.gz": 609743,
+    "bts_2024_06_core.csv.gz": 611132,
+    "bts_2024_07_core.csv.gz": 634613,
+    "bts_2024_08_core.csv.gz": 619025,
+    "bts_2024_09_core.csv.gz": 582622,
+    "bts_2024_10_core.csv.gz": 615497,
+    "bts_2024_11_core.csv.gz": 575404,
+    "bts_2024_12_core.csv.gz": 590581
+  },
+  "column_audit_output": "analysis\\profiling\\2024_type_audit_by_column.csv"
+}

@@ -1,0 +1,7 @@
+processed_file,Year,Month,FlightDate,Reporting_Airline,Flight_Number_Reporting_Airline,Origin,Dest,CRSDepTime,CRSArrTime,Cancelled,Diverted,DivAirportLandings,CRSElapsedTime,ActualElapsedTime,AirTime
+bts_2025_09_core.csv.gz,2025,9,2025-09-06,YX,5859,JFK,MVY,1209,1333,0.00,0.00,,84.00,,
+bts_2025_11_core.csv.gz,2025,11,2025-11-19,OO,3574,DTW,LEX,1053,0953,0.00,0.00,0,-60.00,158.00,53.00
+bts_2025_11_core.csv.gz,2025,11,2025-11-20,WN,32,HOU,DAL,1635,1510,0.00,1.00,1,-85.00,,
+bts_2025_11_core.csv.gz,2025,11,2025-11-17,WN,1556,LAS,BUR,1724,1545,0.00,1.00,1,-99.00,,
+bts_2025_11_core.csv.gz,2025,11,2025-11-17,WN,3526,LAS,BUR,1802,1655,0.00,1.00,1,-67.00,,
+bts_2025_12_core.csv.gz,2025,12,2025-12-21,WN,575,HOU,HRL,0056,2355,1.00,0.00,9,-61.00,,

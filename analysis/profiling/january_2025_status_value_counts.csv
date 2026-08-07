@@ -1,0 +1,17 @@
+column_name,observed_value,row_count,percentage_of_all_rows
+Cancelled,0.00,523435,96.9778
+Cancelled,1.00,16312,3.0222
+Diverted,0.00,538581,99.784
+Diverted,1.00,1166,0.216
+DepDel15,0.00,428164,79.3268
+DepDel15,1.00,95660,17.7231
+ArrDel15,0.00,424139,78.5811
+ArrDel15,1.00,98130,18.1807
+CancellationCode,B,14327,2.6544
+CancellationCode,A,1635,0.3029
+CancellationCode,C,342,0.0634
+CancellationCode,D,8,0.0015
+DivAirportLandings,0,538495,99.768
+DivAirportLandings,1,1148,0.2127
+DivAirportLandings,9,86,0.0159
+DivAirportLandings,2,18,0.0033

@@ -1,0 +1,13 @@
+reporting_year,reporting_month,source_file,zip_ok,csv_member_count,source_official_column_count,blank_header_count,missing_required_columns,duplicate_source_headers,row_count,flight_date_parse_failures,year_mismatch_rows,month_mismatch_rows,candidate_key_null_rows,duplicate_key_occurrences,cancelled_and_diverted_rows,cancelled_without_code_rows,non_cancelled_with_code_rows,delayed_missing_cause_rows,ineligible_with_cause_rows,div_airport_landing_values,review_required,error_message
+2025,1,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_1.zip,True,1,109,1,,,539747,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,2,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_2.zip,True,1,109,1,,,504884,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,3,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_3.zip,True,1,109,1,,,600872,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,4,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_4.zip,True,1,109,1,,,583950,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,5,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_5.zip,True,1,109,1,,,605648,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,6,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_6.zip,True,1,109,1,,,611575,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 3 | 9,False,
+2025,7,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_7.zip,True,1,109,1,,,631428,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,8,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_8.zip,True,1,109,1,,,602378,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,9,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_9.zip,True,1,109,1,,,562439,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,10,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_10.zip,True,1,109,1,,,605844,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,11,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_11.zip,True,1,109,1,,,570550,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 9,False,
+2025,12,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_12.zip,True,1,109,1,,,582304,0,0,0,0,0,0,0,0,0,0,0 | 1 | 2 | 3 | 9,False,

@@ -1,0 +1,3 @@
+review_reason,FlightDate,Reporting_Airline,DOT_ID_Reporting_Airline,Tail_Number,Flight_Number_Reporting_Airline,OriginAirportID,Origin,DestAirportID,Dest,CRSDepTime,DepTime,CRSArrTime,ArrTime,ArrDelay,ArrDel15,Cancelled,Diverted,CarrierDelay,WeatherDelay,NASDelay,SecurityDelay,LateAircraftDelay,_source_file,_source_row_number
+arrival_delayed_15_but_all_delay_causes_missing,2024-07-10,F9,20436,N228FR,1665,10821,BWI,13303,MIA,2024,2220,2310,0116,126.00,1.00,0.00,0.00,,,,,,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_7.zip,247488
+arrival_delayed_15_but_all_delay_causes_missing,2024-07-15,F9,20436,N303FR,3470,12266,IAH,13204,MCO,1607,1941,1951,2251,180.00,1.00,0.00,0.00,,,,,,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_7.zip,250689

@@ -1,0 +1,257 @@
+[
+    {
+        "name":  "Year",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "Month",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "FlightDate",
+        "type":  "DATE",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "Reporting_Airline",
+        "type":  "STRING",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "DOT_ID_Reporting_Airline",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "Tail_Number",
+        "type":  "STRING",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "Flight_Number_Reporting_Airline",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "OriginAirportID",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "OriginAirportSeqID",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "OriginCityMarketID",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "Origin",
+        "type":  "STRING",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "OriginCityName",
+        "type":  "STRING",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "OriginState",
+        "type":  "STRING",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "DestAirportID",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "DestAirportSeqID",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "DestCityMarketID",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "Dest",
+        "type":  "STRING",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "DestCityName",
+        "type":  "STRING",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "DestState",
+        "type":  "STRING",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "CRSDepTime",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "DepTime",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "DepDelay",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "DepDelayMinutes",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "DepDel15",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "DepartureDelayGroups",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "DepTimeBlk",
+        "type":  "STRING",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "TaxiOut",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "WheelsOff",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "WheelsOn",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "TaxiIn",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "CRSArrTime",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "ArrTime",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "ArrDelay",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "ArrDelayMinutes",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "ArrDel15",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "ArrivalDelayGroups",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "ArrTimeBlk",
+        "type":  "STRING",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "Cancelled",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "CancellationCode",
+        "type":  "STRING",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "Diverted",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "DivAirportLandings",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "CRSElapsedTime",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "ActualElapsedTime",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "AirTime",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "Distance",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "DistanceGroup",
+        "type":  "INTEGER",
+        "mode":  "REQUIRED"
+    },
+    {
+        "name":  "CarrierDelay",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "WeatherDelay",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "NASDelay",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "SecurityDelay",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    },
+    {
+        "name":  "LateAircraftDelay",
+        "type":  "INTEGER",
+        "mode":  "NULLABLE"
+    }
+]

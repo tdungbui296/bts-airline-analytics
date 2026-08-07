@@ -1,0 +1,29 @@
+{
+  "input_file": "data\\processed\\pilot\\bts_2025_01_core.csv",
+  "expected_row_count_from_projection": 539747,
+  "profiled_row_count": 539747,
+  "row_count_reconciled": true,
+  "expected_column_count": 52,
+  "actual_column_count": 52,
+  "schema_matches_exactly": true,
+  "missing_columns": [],
+  "unexpected_columns": [],
+  "candidate_key_columns": [
+    "FlightDate",
+    "DOT_ID_Reporting_Airline",
+    "Flight_Number_Reporting_Airline",
+    "OriginAirportID",
+    "DestAirportID",
+    "CRSDepTime"
+  ],
+  "candidate_key_null_rows": 0,
+  "duplicate_candidate_key_rows": 0,
+  "duplicate_candidate_key_groups": 0,
+  "flight_date_parse_failures": 0,
+  "year_parse_failures": 0,
+  "month_parse_failures": 0,
+  "year_date_mismatches": 0,
+  "month_date_mismatches": 0,
+  "column_profile_output": "analysis\\profiling\\january_2025_column_profile.csv",
+  "status_counts_output": "analysis\\profiling\\january_2025_status_value_counts.csv"
+}

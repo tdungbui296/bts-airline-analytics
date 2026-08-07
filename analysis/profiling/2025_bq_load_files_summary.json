@@ -1,0 +1,13 @@
+{
+  "generated_at_utc": "2026-08-05T07:38:49.991306+00:00",
+  "year": 2025,
+  "monthly_output_count": 12,
+  "output_column_count": 51,
+  "total_expected_rows": 7001619,
+  "total_output_rows": 7001619,
+  "all_row_counts_reconciled": true,
+  "total_output_size_bytes": 279011553,
+  "total_output_size_mb": 266.09,
+  "load_manifest": "evidence\\source\\2025_bq_load_manifest.csv",
+  "output_directory": "data\\load\\2025"
+}

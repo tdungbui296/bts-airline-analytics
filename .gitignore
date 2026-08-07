@@ -1,0 +1,17 @@
+﻿data/raw/
+data/processed/
+data/load/
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+logs/

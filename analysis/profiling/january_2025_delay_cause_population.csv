@@ -1,0 +1,16 @@
+arr_del_15_value,delay_cause_column,status_row_count,cause_non_null_count,cause_null_count
+0.00,CarrierDelay,424139,0,424139
+1.00,CarrierDelay,98130,98130,0
+<NULL>,CarrierDelay,17478,0,17478
+0.00,WeatherDelay,424139,0,424139
+1.00,WeatherDelay,98130,98130,0
+<NULL>,WeatherDelay,17478,0,17478
+0.00,NASDelay,424139,0,424139
+1.00,NASDelay,98130,98130,0
+<NULL>,NASDelay,17478,0,17478
+0.00,SecurityDelay,424139,0,424139
+1.00,SecurityDelay,98130,98130,0
+<NULL>,SecurityDelay,17478,0,17478
+0.00,LateAircraftDelay,424139,0,424139
+1.00,LateAircraftDelay,98130,98130,0
+<NULL>,LateAircraftDelay,17478,0,17478

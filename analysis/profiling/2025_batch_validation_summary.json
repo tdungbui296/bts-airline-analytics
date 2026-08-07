@@ -1,0 +1,10 @@
+{
+  "year": 2025,
+  "monthly_file_count": 12,
+  "missing_months": [],
+  "total_rows": 7001619,
+  "passed_month_count": 12,
+  "review_month_count": 0,
+  "review_months": [],
+  "monthly_validation_output": "analysis\\profiling\\2025_monthly_validation_summary.csv"
+}

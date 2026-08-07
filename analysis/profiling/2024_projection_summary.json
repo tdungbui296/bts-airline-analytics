@@ -1,0 +1,14 @@
+{
+  "generated_at_utc": "2026-08-06T06:08:11.293563+00:00",
+  "year": 2024,
+  "monthly_output_count": 12,
+  "total_source_rows": 7079061,
+  "total_output_rows": 7079061,
+  "all_row_counts_reconciled": true,
+  "core_source_column_count": 51,
+  "technical_column_count": 1,
+  "output_column_count": 52,
+  "total_output_size_bytes": 317401314,
+  "total_output_size_mb": 302.7,
+  "processed_manifest": "evidence\\source\\2024_processed_manifest.csv"
+}

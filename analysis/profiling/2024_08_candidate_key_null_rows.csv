@@ -1,0 +1,2 @@
+review_reason,missing_key_fields,FlightDate,Reporting_Airline,DOT_ID_Reporting_Airline,Tail_Number,Flight_Number_Reporting_Airline,OriginAirportID,Origin,DestAirportID,Dest,CRSDepTime,DepTime,CRSArrTime,ArrTime,ArrDelay,ArrDel15,Cancelled,Diverted,CarrierDelay,WeatherDelay,NASDelay,SecurityDelay,LateAircraftDelay,_source_file,_source_row_number
+candidate_key_component_missing,Flight_Number_Reporting_Airline,2024-08-25,F9,20436,N343FR,,13303,MIA,10397,ATL,0600,0554,0807,0802,-5.00,0.00,0.00,0.00,,,,,,On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_8.zip,234965
