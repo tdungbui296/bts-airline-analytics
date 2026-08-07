@@ -1,0 +1,132 @@
+version: 2
+
+models:
+  - name: int_flights__quality_classified
+    description: >
+      Flight-grain intermediate model that preserves the standardized
+      BTS source fields while applying documented data-quality
+      reclassification and metric-eligibility rules. Valid operational
+      behavior is separated from genuine source-quality exceptions.
+      The model remains a view in the BigQuery Sandbox environment.
+
+    columns:
+      - name: flight_key
+        description: >
+          Deterministic flight-grain technical key inherited from the
+          staging model. A flagged fallback strategy is used when the
+          reporting flight number is missing.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: valid_scheduled_elapsed_minutes
+        description: >
+          Scheduled elapsed duration retained only when the reported
+          value is zero or positive. Negative and missing source values
+          are represented as null in this analytical field.
+
+      - name: is_eligible_for_scheduled_duration_metrics
+        description: >
+          True when scheduled elapsed time is present and non-negative.
+        data_tests:
+          - not_null
+
+      - name: is_cancelled_air_return
+        description: >
+          True when DivAirportLandings equals the BTS special code 9,
+          representing an air or fly return that ultimately ended in
+          cancellation. Code 9 is categorical and is not interpreted
+          as nine landings.
+        data_tests:
+          - not_null
+
+      - name: operational_cancelled_flag
+        description: >
+          Business-facing cancellation classification that is true
+          when either the source cancellation indicator is true or the
+          cancelled-air-return code is present.
+        data_tests:
+          - not_null
+
+      - name: has_air_return_cancellation_conflict
+        description: >
+          True when DivAirportLandings is code 9 but the source
+          cancellation indicator is false.
+        data_tests:
+          - not_null
+
+      - name: valid_diversion_landing_count
+        description: >
+          Analytical diversion-landing count containing numeric values
+          zero through five. Code 9 is excluded because it represents a
+          category rather than a landing count. A missing value on a
+          confirmed non-diverted flight is represented as zero only in
+          this derived field.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2, 3, 4, 5]
+                quote: false
+
+      - name: has_non_diverted_missing_landing_value
+        description: >
+          True when the original diversion-landing value is null even
+          though the flight is identified as non-diverted.
+        data_tests:
+          - not_null
+
+      - name: has_unclassified_incomplete_arrival
+        description: >
+          True when a flight is reported as neither operationally
+          cancelled nor diverted, has departed and taken off, but
+          lacks wheels-on or actual-arrival evidence.
+        data_tests:
+          - not_null
+
+      - name: has_missing_delay_cause_breakdown
+        description: >
+          True when a non-diverted flight was delayed at least
+          15 minutes but all five BTS delay-cause fields are missing.
+          Such flights remain part of overall delay metrics but are
+          excluded from cause decomposition.
+        data_tests:
+          - not_null
+
+      - name: has_expected_cancelled_actual_elapsed_null
+        description: >
+          True when a source-cancelled flight has no actual elapsed
+          duration. This is expected because the scheduled journey was
+          not completed.
+        data_tests:
+          - not_null
+
+      - name: has_missing_scheduled_elapsed_on_cancelled_flight
+        description: >
+          True when a source-cancelled flight unusually lacks its
+          scheduled elapsed duration. Scheduled duration normally
+          remains available even when a flight is cancelled.
+        data_tests:
+          - not_null
+
+      - name: is_eligible_for_actual_duration_metrics
+        description: >
+          True for non-diverted, operationally non-cancelled flights
+          with a reported actual elapsed time.
+        data_tests:
+          - not_null
+
+      - name: has_zero_delay_cause_breakdown
+        description: >
+          True when a non-diverted flight was delayed at least
+          15 minutes but all five BTS delay-cause fields are
+          explicitly zero. Such flights remain valid for overall
+          delay analysis but are excluded from cause decomposition.
+        data_tests:
+          - not_null
+
+      - name: is_eligible_for_delay_cause_metrics
+        description: >
+          True when a non-diverted flight was delayed at least
+          15 minutes and has a positive, usable delay-cause breakdown.
+        data_tests:
+          - not_null

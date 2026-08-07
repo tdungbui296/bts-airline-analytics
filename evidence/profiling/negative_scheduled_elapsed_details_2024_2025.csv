@@ -1,0 +1,7 @@
+flight_key,flight_date,reporting_airline_code,flight_number,tail_number,origin_airport_code,destination_airport_code,scheduled_departure_hhmm,scheduled_arrival_hhmm,scheduled_elapsed_minutes,cancelled_flag,diverted_flag
+ea6d4e128a7b66ce5cbe8caba8a392f95f2f580e79d216cab485ca6e83086608,2024-03-27,WN,336,N422WN,LAS,RNO,1840,1600,-160,1,0
+5610e1fb914b6a5f7b97223bbd1ca5f0800b76cdc29e31cde03239888a6ef937,2025-11-17,WN,1556,N7738A,LAS,BUR,1724,1545,-99,0,1
+b17b0f8e101d549aafd7aed4b37bea1a47dd89f7fa8375919fafa48ee555cf51,2025-11-17,WN,3526,N7847A,LAS,BUR,1802,1655,-67,0,1
+5074d595a5f9e2b046063c9e86dd278bbcf5049e4f444ebff7bd9a749d2f70da,2025-11-19,OO,3574,N778SK,DTW,LEX,1053,953,-60,0,0
+defae2dcdd46d0e9f29a741e7ec0ccf30150814b1d044cede0054ae82a91d7a4,2025-11-20,WN,32,N264LV,HOU,DAL,1635,1510,-85,0,1
+d17490b3b918540eef86a8f59d9e1b3c876c1c299b4d5acbfd6055ad81f46fcf,2025-12-21,WN,575,N8584Z,HOU,HRL,56,2355,-61,1,0
