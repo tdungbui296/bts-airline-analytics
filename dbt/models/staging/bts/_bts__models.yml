@@ -1,0 +1,102 @@
+version: 2
+
+models:
+  - name: stg_bts__flights
+    description: >
+      Standardized flight-level staging view derived from the validated
+      BTS Reporting Carrier On-Time Performance landing table. The model
+      preserves one row per reported scheduled flight, renames source
+      columns, derives analyst-friendly flags, exposes known source-data
+      anomalies, and creates a deterministic technical flight key.
+
+    columns:
+      - name: flight_key
+        description: >
+          Deterministic SHA-256 technical key. Standard records use
+          flight date, reporting airline DOT ID, flight number, origin
+          airport ID, destination airport ID, and scheduled departure
+          HHMM. Records missing the reporting flight number use a
+          validated fallback identity based on flight date, airline,
+          tail number, route, scheduled departure, and scheduled arrival.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: flight_date
+        description: Scheduled calendar date of the reported flight.
+        data_tests:
+          - not_null
+
+      - name: reporting_airline_dot_id
+        description: DOT identifier of the reporting airline.
+        data_tests:
+          - not_null
+
+      - name: flight_number
+        description: >
+          Reporting-airline flight number. The original source value
+          remains null when BTS does not provide it.
+
+      - name: uses_fallback_flight_key
+        description: >
+          True when the reporting flight number is missing and the
+          technical flight key is generated from the validated fallback
+          identity.
+        data_tests:
+          - not_null
+
+      - name: origin_airport_id
+        description: BTS identifier of the origin airport.
+        data_tests:
+          - not_null
+
+      - name: destination_airport_id
+        description: BTS identifier of the destination airport.
+        data_tests:
+          - not_null
+
+      - name: scheduled_departure_hhmm
+        description: >
+          Scheduled departure time encoded as an integer HHMM value.
+          Conversion to an analytical time value occurs downstream.
+        data_tests:
+          - not_null
+
+      - name: cancelled_flag
+        description: Source cancellation indicator stored as 0 or 1.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+                quote: false
+
+      - name: diverted_flag
+        description: Source diversion indicator stored as 0 or 1.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+                quote: false
+
+      - name: is_cancelled
+        description: Boolean interpretation of cancelled_flag = 1.
+
+      - name: is_diverted
+        description: Boolean interpretation of diverted_flag = 1.
+
+      - name: is_departure_delayed_15_minutes
+        description: >
+          Boolean interpretation of the BTS departure-delay indicator.
+
+      - name: is_arrival_delayed_15_minutes
+        description: >
+          Boolean interpretation of the BTS arrival-delay indicator.
+
+      - name: is_scheduled_elapsed_time_missing
+        description: >
+          True when the source scheduled elapsed-time value is null.
+
+      - name: has_negative_scheduled_elapsed_time
+        description: >
+          True when the source scheduled elapsed-time value is negative.
+          The source value remains preserved for traceability.

@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: raw_bts
+    description: >
+      Validated landing data from the BTS Reporting Carrier
+      On-Time Performance dataset.
+
+    database: tdb-dbt-bigquery-portfolio
+    schema: raw_bts
+
+    tables:
+      - name: flights
+        description: >
+          Flight-level 2025 reporting-carrier performance records
+          loaded from twelve validated monthly BTS source files.
