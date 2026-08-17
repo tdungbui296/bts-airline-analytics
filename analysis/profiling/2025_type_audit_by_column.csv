@@ -5,7 +5,7 @@ FlightDate,DATE,valid_date,7001619,0,0.0,7001619,0,0,0,0,0,2025-01-01,2025-12-31
 Reporting_Airline,STRING,string,7001619,0,0.0,7001619,0,0,0,0,0,,,2,,True
 DOT_ID_Reporting_Airline,INT64,integer,7001619,0,0.0,7001619,0,0,0,0,0,19393,20452,0,,True
 Tail_Number,STRING,string_nullable,7001619,12501,0.1785,6989118,0,0,0,0,0,,,6,,True
-Flight_Number_Reporting_Airline,INT64,integer,7001619,0,0.0,7001619,0,0,0,0,0,1,9914,0,,True
+Flight_Number_Reporting_Airline,INT64,integer_nullable,7001619,0,0.0,7001619,0,0,0,0,0,1,9914,0,,True
 OriginAirportID,INT64,integer,7001619,0,0.0,7001619,0,0,0,0,0,10135,16869,0,,True
 OriginAirportSeqID,INT64,integer,7001619,0,0.0,7001619,0,0,0,0,0,1013506,1686902,0,,True
 OriginCityMarketID,INT64,integer,7001619,0,0.0,7001619,0,0,0,0,0,30070,36422,0,,True
