@@ -97,35 +97,63 @@ quality_classified as (
             and late_aircraft_delay_minutes is null
         ) as has_missing_delay_cause_breakdown,
 
-    /*
-    A qualifying delayed flight can also contain explicit zeroes
-    across all five BTS delay-cause fields. Preserve this separately
-    from the all-NULL missing-breakdown condition.
-    */
-    coalesce(
-        (
-            coalesce(
-                is_arrival_delayed_15_minutes,
-                false
-            )
-            and not coalesce(is_diverted, false)
-            and carrier_delay_minutes = 0
-            and weather_delay_minutes = 0
-            and national_airspace_delay_minutes = 0
-            and security_delay_minutes = 0
-            and late_aircraft_delay_minutes = 0
-        ),
-        false
-    ) as has_zero_delay_cause_breakdown
+        /*
+        A qualifying delayed flight can also contain explicit zeroes
+        across all five BTS delay-cause fields. Preserve this separately
+        from the all-NULL missing-breakdown condition.
+        */
+        coalesce(
+            (
+                coalesce(
+                    is_arrival_delayed_15_minutes,
+                    false
+                )
+                and not coalesce(is_diverted, false)
+                and carrier_delay_minutes = 0
+                and weather_delay_minutes = 0
+                and national_airspace_delay_minutes = 0
+                and security_delay_minutes = 0
+                and late_aircraft_delay_minutes = 0
+            ),
+            false
+        ) as has_zero_delay_cause_breakdown
 
     from flights
+
+),
+
+completion_classified as (
+
+    select
+        quality_classified.*,
+
+        /*
+        Flag flights that demonstrably departed and took off, are
+        reported as neither operationally cancelled nor diverted,
+        but lack final landing or actual-arrival evidence.
+
+        These records are not treated as completed journeys for
+        metrics requiring observed completion.
+        */
+        (
+            not operational_cancelled_flag
+            and not coalesce(is_diverted, false)
+            and actual_departure_hhmm is not null
+            and wheels_off_hhmm is not null
+            and (
+                wheels_on_hhmm is null
+                or actual_arrival_hhmm is null
+            )
+        ) as has_unclassified_incomplete_arrival
+
+    from quality_classified
 
 ),
 
 metric_eligibility as (
 
     select
-        quality_classified.*,
+        completion_classified.*,
 
         /*
         Actual elapsed time is normally missing for cancelled
@@ -146,38 +174,38 @@ metric_eligibility as (
         ) as has_missing_scheduled_elapsed_on_cancelled_flight,
 
         /*
-        Flag flights that demonstrably departed and took off, are
-        reported as neither operationally cancelled nor diverted,
-        but lack final landing or actual-arrival evidence.
+        Actual-duration metrics require a completed, operationally
+        non-cancelled, non-diverted journey with an observed actual
+        elapsed duration.
         */
         (
             not operational_cancelled_flag
             and not coalesce(is_diverted, false)
-            and actual_departure_hhmm is not null
-            and wheels_off_hhmm is not null
-            and (
-                wheels_on_hhmm is null
-                or actual_arrival_hhmm is null
-            )
-        ) as has_unclassified_incomplete_arrival,
-
-        (
-            not operational_cancelled_flag
-            and not coalesce(is_diverted, false)
             and actual_elapsed_minutes is not null
+            and not has_unclassified_incomplete_arrival
         ) as is_eligible_for_actual_duration_metrics,
 
+        /*
+        Delay-cause decomposition requires an eligible delayed,
+        non-diverted flight with positive attributed minutes across
+        the five BTS delay-cause categories.
+        */
         (
             coalesce(
                 is_arrival_delayed_15_minutes,
                 false
             )
             and not coalesce(is_diverted, false)
-            and not has_missing_delay_cause_breakdown
-            and not has_zero_delay_cause_breakdown
+            and (
+                coalesce(carrier_delay_minutes, 0)
+                + coalesce(weather_delay_minutes, 0)
+                + coalesce(national_airspace_delay_minutes, 0)
+                + coalesce(security_delay_minutes, 0)
+                + coalesce(late_aircraft_delay_minutes, 0)
+            ) > 0
         ) as is_eligible_for_delay_cause_metrics
 
-    from quality_classified
+    from completion_classified
 
 )
 

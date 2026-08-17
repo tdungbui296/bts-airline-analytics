@@ -79,7 +79,8 @@ models:
         description: >
           True when a flight is reported as neither operationally
           cancelled nor diverted, has departed and taken off, but
-          lacks wheels-on or actual-arrival evidence.
+          lacks wheels-on or actual-arrival evidence. Such flights are
+          excluded from metrics requiring observed journey completion.
         data_tests:
           - not_null
 
@@ -110,8 +111,11 @@ models:
 
       - name: is_eligible_for_actual_duration_metrics
         description: >
-          True for non-diverted, operationally non-cancelled flights
-          with a reported actual elapsed time.
+          True for operationally non-cancelled, non-diverted flights
+          with a reported actual elapsed time and no unclassified
+          incomplete-arrival condition. Actual-duration metrics
+          therefore require evidence consistent with an observed
+          completed journey.
         data_tests:
           - not_null
 

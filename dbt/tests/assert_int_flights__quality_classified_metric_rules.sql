@@ -53,6 +53,14 @@ where
             not operational_cancelled_flag
             and not coalesce(is_diverted, false)
             and actual_elapsed_minutes is not null
+            and not (
+                actual_departure_hhmm is not null
+                and wheels_off_hhmm is not null
+                and (
+                    wheels_on_hhmm is null
+                    or actual_arrival_hhmm is null
+                )
+            )
         )
 
     or is_eligible_for_delay_cause_metrics is distinct from
