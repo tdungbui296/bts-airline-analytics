@@ -1,5 +1,6 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -8,13 +9,6 @@ import pandas as pd
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-
-INPUT_DIR = (
-    PROJECT_ROOT
-    / "data"
-    / "processed"
-    / "2025"
-)
 
 TYPE_MAP_PATH = (
     PROJECT_ROOT
@@ -26,27 +20,6 @@ COLUMN_MANIFEST_PATH = (
     PROJECT_ROOT
     / "config"
     / "bts_core_columns.txt"
-)
-
-PROJECTION_SUMMARY_PATH = (
-    PROJECT_ROOT
-    / "analysis"
-    / "profiling"
-    / "2025_projection_summary.json"
-)
-
-COLUMN_AUDIT_OUTPUT = (
-    PROJECT_ROOT
-    / "analysis"
-    / "profiling"
-    / "2025_type_audit_by_column.csv"
-)
-
-SUMMARY_OUTPUT = (
-    PROJECT_ROOT
-    / "analysis"
-    / "profiling"
-    / "2025_type_audit_summary.json"
 )
 
 CHUNK_SIZE = 100_000
@@ -90,6 +63,16 @@ HHMM_RULES = {
 VALID_DIVERSION_CODES = {
     0, 1, 2, 3, 4, 5, 9
 }
+
+
+def parse_year(value: str) -> str:
+    """Validate a four-digit year supplied on the command line."""
+    if len(value) != 4 or not value.isdigit():
+        raise argparse.ArgumentTypeError(
+            "year must be a four-digit value such as 2024"
+        )
+
+    return value
 
 
 def load_contract() -> pd.DataFrame:
@@ -203,11 +186,56 @@ def valid_hhmm_mask(values: pd.Series) -> pd.Series:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Audit processed BTS core files against the proposed "
+            "BigQuery type contract."
+        )
+    )
+
+    parser.add_argument(
+        "--year",
+        required=True,
+        type=parse_year,
+        help="Four-digit source year, for example 2024 or 2025.",
+    )
+
+    args = parser.parse_args()
+    year = args.year
+
+    input_dir = (
+        PROJECT_ROOT
+        / "data"
+        / "processed"
+        / year
+    )
+
+    projection_summary_path = (
+        PROJECT_ROOT
+        / "analysis"
+        / "profiling"
+        / f"{year}_projection_summary.json"
+    )
+
+    column_audit_output = (
+        PROJECT_ROOT
+        / "analysis"
+        / "profiling"
+        / f"{year}_type_audit_by_column.csv"
+    )
+
+    summary_output = (
+        PROJECT_ROOT
+        / "analysis"
+        / "profiling"
+        / f"{year}_type_audit_summary.json"
+    )
+
     required_paths = [
-        INPUT_DIR,
+        input_dir,
         TYPE_MAP_PATH,
         COLUMN_MANIFEST_PATH,
-        PROJECTION_SUMMARY_PATH,
+        projection_summary_path,
     ]
 
     for path in required_paths:
@@ -239,8 +267,8 @@ def main() -> None:
     )
 
     input_files = sorted(
-        INPUT_DIR.glob(
-            "bts_2025_*_core.csv.gz"
+        input_dir.glob(
+            f"bts_{year}_*_core.csv.gz"
         )
     )
 
@@ -464,10 +492,6 @@ def main() -> None:
                         & ~fractional_mask
                     )
 
-                    integer_values = numeric_values.loc[
-                        valid_integer_mask
-                    ]
-
                     domain_violation_mask = pd.Series(
                         False,
                         index=source_values.index,
@@ -636,19 +660,19 @@ def main() -> None:
 
     audit_df = pd.DataFrame(output_rows)
 
-    COLUMN_AUDIT_OUTPUT.parent.mkdir(
+    column_audit_output.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
 
     audit_df.to_csv(
-        COLUMN_AUDIT_OUTPUT,
+        column_audit_output,
         index=False,
         encoding="utf-8",
     )
 
     projection_summary = json.loads(
-        PROJECTION_SUMMARY_PATH.read_text(
+        projection_summary_path.read_text(
             encoding="utf-8"
         )
     )
@@ -687,13 +711,13 @@ def main() -> None:
         ),
         "monthly_row_counts": monthly_row_counts,
         "column_audit_output": str(
-            COLUMN_AUDIT_OUTPUT.relative_to(
+            column_audit_output.relative_to(
                 PROJECT_ROOT
             )
         ),
     }
 
-    SUMMARY_OUTPUT.write_text(
+    summary_output.write_text(
         json.dumps(
             summary,
             indent=2,
@@ -702,7 +726,7 @@ def main() -> None:
     )
 
     print()
-    print("2025 type audit completed.")
+    print(f"{year} type audit completed.")
     print(
         f"Rows audited: {total_rows:,}"
     )
@@ -722,8 +746,8 @@ def main() -> None:
         "All proposed types safe: "
         f"{summary['all_proposed_types_safe']}"
     )
-    print(f"Column output: {COLUMN_AUDIT_OUTPUT}")
-    print(f"Summary: {SUMMARY_OUTPUT}")
+    print(f"Column output: {column_audit_output}")
+    print(f"Summary: {summary_output}")
 
 
 if __name__ == "__main__":
