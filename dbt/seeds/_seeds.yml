@@ -1,0 +1,51 @@
+version: 2
+
+seeds:
+
+  - name: dim_delay_cause
+    description: >
+      Controlled delay-cause classification used by the normalized
+      flight delay-attribution fact. One row represents one supported
+      BTS delay-cause category.
+
+    columns:
+
+      - name: delay_cause_key
+        description: >
+          Stable semantic primary key identifying the delay-cause category.
+        data_tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values:
+                  - CARRIER
+                  - WEATHER
+                  - NATIONAL_AIRSPACE
+                  - SECURITY
+                  - LATE_AIRCRAFT
+
+      - name: delay_cause_name
+        description: >
+          Human-readable delay-cause label.
+        data_tests:
+          - not_null
+
+      - name: source_field_name
+        description: >
+          Standardized staging field from which delay minutes for this
+          cause originate.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: cause_sort_order
+        description: >
+          Stable display order for delay-cause reporting.
+        data_tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+                quote: false

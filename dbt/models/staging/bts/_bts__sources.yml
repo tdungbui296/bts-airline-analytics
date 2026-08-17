@@ -12,5 +12,5 @@ sources:
     tables:
       - name: flights
         description: >
-          Flight-level 2025 reporting-carrier performance records
-          loaded from twelve validated monthly BTS source files.
+          Flight-level 2024-2025 reporting-carrier performance records
+          loaded from twenty-four validated monthly BTS source files.

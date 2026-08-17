@@ -1,0 +1,503 @@
+version: 2
+
+models:
+
+  - name: dim_carrier
+    description: >
+      Conformed reporting-carrier dimension. One row represents one
+      stable BTS reporting airline DOT identifier.
+
+    columns:
+
+      - name: reporting_airline_dot_id
+        description: >
+          Natural primary key identifying the BTS reporting carrier.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: reporting_airline_code
+        description: >
+          BTS reporting airline code associated with the carrier DOT ID.
+        data_tests:
+          - not_null
+
+
+  - name: dim_date
+    description: >
+      Conformed calendar dimension containing one row for every date
+      between the earliest and latest modeled BTS flight dates.
+
+    columns:
+
+      - name: date_day
+        description: >
+          Natural primary key representing one calendar date.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: calendar_year
+        description: >
+          Calendar year.
+        data_tests:
+          - not_null
+
+      - name: calendar_quarter
+        description: >
+          Calendar quarter from 1 through 4.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4]
+                quote: false
+
+      - name: calendar_month
+        description: >
+          Calendar month number from 1 through 12.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                quote: false
+
+      - name: month_name
+        description: >
+          Full calendar month name.
+        data_tests:
+          - not_null
+
+      - name: year_month
+        description: >
+          Calendar year-month represented as YYYY-MM.
+        data_tests:
+          - not_null
+
+      - name: day_of_month
+        description: >
+          Day number within the month.
+        data_tests:
+          - not_null
+
+      - name: day_of_week_number
+        description: >
+          ISO-style weekday number where Monday is 1 and Sunday is 7.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5, 6, 7]
+                quote: false
+
+      - name: day_name
+        description: >
+          Full weekday name.
+        data_tests:
+          - not_null
+
+      - name: iso_week
+        description: >
+          ISO week number.
+        data_tests:
+          - not_null
+
+      - name: iso_year
+        description: >
+          ISO week-numbering year.
+        data_tests:
+          - not_null
+
+      - name: is_weekend
+        description: >
+          True when the calendar date is Saturday or Sunday.
+        data_tests:
+          - not_null
+
+
+  - name: dim_airport
+    description: >
+      Conformed airport dimension containing one row per stable BTS
+      airport identifier and reusable for both origin and destination roles.
+
+    columns:
+
+      - name: airport_id
+        description: >
+          Natural primary key identifying the stable BTS airport entity.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: airport_code
+        description: >
+          BTS airport code associated with the airport identifier.
+        data_tests:
+          - not_null
+
+      - name: city_market_id
+        description: >
+          BTS city-market identifier associated with the airport.
+        data_tests:
+          - not_null
+
+      - name: city_name
+        description: >
+          City name associated with the airport.
+        data_tests:
+          - not_null
+
+      - name: state_code
+        description: >
+          State code associated with the airport.
+        data_tests:
+          - not_null
+
+
+  - name: fact_flights
+    description: >
+      Flight-grain analytical fact containing one row per reported
+      scheduled flight. The model exposes conformed dimension keys,
+      operational measures, delay-cause measures, and metric-eligibility
+      fields derived from the quality-classified intermediate layer.
+      During BigQuery Sandbox development, the model is materialized as
+      a view to avoid duplicating the full historical flight dataset.
+      The final deployment target is a partitioned and clustered
+      incremental table.
+
+    columns:
+
+      - name: flight_key
+        description: >
+          Deterministic technical primary key identifying one reported
+          scheduled flight.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: flight_date
+        description: >
+          Scheduled calendar date of the flight and foreign key to
+          dim_date.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+
+      - name: reporting_airline_dot_id
+        description: >
+          BTS reporting-airline DOT identifier and foreign key to
+          dim_carrier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: reporting_airline_dot_id
+
+      - name: origin_airport_id
+        description: >
+          BTS airport identifier for the flight origin and role-playing
+          foreign key to dim_airport.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_id
+
+      - name: destination_airport_id
+        description: >
+          BTS airport identifier for the flight destination and
+          role-playing foreign key to dim_airport.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_id
+
+      - name: flight_number
+        description: >
+          Reporting-airline flight number. The value may remain null
+          where BTS does not provide a flight number.
+
+      - name: tail_number
+        description: >
+          Aircraft tail number when reported by BTS. Retained to support
+          aircraft-level operational and delay-propagation analysis.
+
+      - name: uses_fallback_flight_key
+        description: >
+          True when the technical flight key was generated using the
+          validated fallback identity because the reporting flight
+          number was unavailable.
+        data_tests:
+          - not_null
+
+      - name: scheduled_departure_hhmm
+        description: >
+          Scheduled departure time encoded as an integer HHMM value.
+
+      - name: actual_departure_hhmm
+        description: >
+          Actual departure time encoded as an integer HHMM value when
+          reported by BTS.
+
+      - name: departure_delay_minutes_signed
+        description: >
+          Signed difference in minutes between scheduled and actual
+          departure. Negative values represent early departures.
+
+      - name: is_departure_delayed_15_minutes
+        description: >
+          True when the flight departed at least 15 minutes later than
+          scheduled.
+
+      - name: taxi_out_minutes
+        description: >
+          Minutes between gate departure and wheels-off when reported.
+
+      - name: wheels_off_hhmm
+        description: >
+          Wheels-off time encoded as an integer HHMM value when reported.
+
+      - name: wheels_on_hhmm
+        description: >
+          Wheels-on time encoded as an integer HHMM value when reported.
+
+      - name: taxi_in_minutes
+        description: >
+          Minutes between wheels-on and gate arrival when reported.
+
+      - name: scheduled_arrival_hhmm
+        description: >
+          Scheduled arrival time encoded as an integer HHMM value.
+
+      - name: actual_arrival_hhmm
+        description: >
+          Actual arrival time encoded as an integer HHMM value when
+          reported by BTS.
+
+      - name: arrival_delay_minutes_signed
+        description: >
+          Signed difference in minutes between scheduled and actual
+          arrival. Negative values represent early arrivals.
+
+      - name: is_arrival_delayed_15_minutes
+        description: >
+          True when the flight arrived at least 15 minutes later than
+          scheduled.
+
+      - name: is_cancelled
+        description: >
+          Boolean interpretation of the original BTS cancellation flag.
+
+      - name: operational_cancelled_flag
+        description: >
+          Analytical cancellation indicator that incorporates both the
+          standard BTS cancellation flag and the documented air-return
+          cancellation condition.
+        data_tests:
+          - not_null
+
+      - name: cancellation_code
+        description: >
+          BTS cancellation reason code when the flight is cancelled.
+
+      - name: is_diverted
+        description: >
+          Boolean interpretation of the BTS diversion indicator.
+
+      - name: valid_diversion_landing_count
+        description: >
+          Analytically valid diversion landing count. The BTS categorical
+          air-return code is excluded from this numeric measure.
+
+      - name: is_cancelled_air_return
+        description: >
+          True when the BTS diversion-airport-landings field contains
+          the documented air-return cancellation code.
+
+      - name: valid_scheduled_elapsed_minutes
+        description: >
+          Scheduled elapsed duration retained only when the reported
+          source value is analytically valid and non-negative.
+
+      - name: actual_elapsed_minutes
+        description: >
+          Actual gate-to-gate elapsed duration in minutes when available.
+
+      - name: air_time_minutes
+        description: >
+          Airborne duration in minutes when available.
+
+      - name: distance_miles
+        description: >
+          Reported flight distance in statute miles.
+
+      - name: carrier_delay_minutes
+        description: >
+          Minutes of qualifying arrival delay attributed by BTS to the
+          air carrier.
+
+      - name: weather_delay_minutes
+        description: >
+          Minutes of qualifying arrival delay attributed by BTS to
+          weather.
+
+      - name: national_airspace_delay_minutes
+        description: >
+          Minutes of qualifying arrival delay attributed by BTS to the
+          National Airspace System.
+
+      - name: security_delay_minutes
+        description: >
+          Minutes of qualifying arrival delay attributed by BTS to
+          security-related causes.
+
+      - name: late_aircraft_delay_minutes
+        description: >
+          Minutes of qualifying arrival delay attributed by BTS to a
+          late-arriving aircraft.
+
+      - name: has_negative_scheduled_elapsed_time
+        description: >
+          True when the original BTS scheduled elapsed duration is
+          negative.
+
+      - name: is_eligible_for_scheduled_duration_metrics
+        description: >
+          True when the flight has a valid scheduled elapsed duration
+          suitable for analytical duration metrics.
+        data_tests:
+          - not_null
+
+      - name: has_missing_delay_cause_breakdown
+        description: >
+          True when a qualifying delayed non-diverted flight has all
+          five BTS delay-cause fields missing.
+
+      - name: has_zero_delay_cause_breakdown
+        description: >
+          True when a qualifying delayed non-diverted flight reports
+          explicit zeroes across all five BTS delay-cause fields.
+
+      - name: has_unclassified_incomplete_arrival
+        description: >
+          True when the flight demonstrably departed and took off,
+          is neither operationally cancelled nor diverted, but lacks
+          final landing or arrival evidence.
+
+      - name: is_eligible_for_actual_duration_metrics
+        description: >
+          True when the flight has a valid completed-flight duration
+          suitable for actual elapsed-time metrics.
+        data_tests:
+          - not_null
+
+      - name: is_eligible_for_delay_cause_metrics
+        description: >
+          True when the flight qualifies for BTS delay-cause
+          decomposition and has a usable cause breakdown.
+        data_tests:
+          - not_null
+
+
+  - name: fact_flight_delay_cause
+    description: >
+      Sparse flight-delay-cause fact containing one row per flight and
+      positive BTS delay cause. Only flights eligible for delay-cause
+      analysis are included, and cause rows with zero or null attributed
+      minutes are excluded. During BigQuery Sandbox development, the
+      model is materialized as a non-partitioned clustered table because
+      historical date partitions are subject to Sandbox expiration.
+      The model supports additive delay-cause analysis by carrier,
+      airport, route, date, and standardized BTS delay cause.
+
+    columns:
+
+      - name: flight_key
+        description: >
+          Foreign key identifying the flight associated with the
+          attributed delay cause.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fact_flights')
+                field: flight_key
+
+      - name: flight_date
+        description: >
+          Scheduled calendar date of the affected flight and foreign
+          key to dim_date.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+
+      - name: reporting_airline_dot_id
+        description: >
+          BTS reporting-airline DOT identifier and foreign key to
+          dim_carrier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: reporting_airline_dot_id
+
+      - name: origin_airport_id
+        description: >
+          BTS origin airport identifier and role-playing foreign key
+          to dim_airport.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_id
+
+      - name: destination_airport_id
+        description: >
+          BTS destination airport identifier and role-playing foreign
+          key to dim_airport.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_id
+
+      - name: delay_cause_key
+        description: >
+          Standardized delay-cause identifier and foreign key to
+          dim_delay_cause.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_delay_cause')
+                field: delay_cause_key
+          - accepted_values:
+              arguments:
+                values:
+                  - CARRIER
+                  - WEATHER
+                  - NATIONAL_AIRSPACE
+                  - SECURITY
+                  - LATE_AIRCRAFT
+
+      - name: delay_minutes
+        description: >
+          Positive number of delay minutes attributed by BTS to the
+          specified delay cause. Zero and null cause values are excluded
+          from this sparse fact.
+        data_tests:
+          - not_null

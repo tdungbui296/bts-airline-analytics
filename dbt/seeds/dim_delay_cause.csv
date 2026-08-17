@@ -1,0 +1,6 @@
+delay_cause_key,delay_cause_name,source_field_name,cause_sort_order
+CARRIER,Carrier,carrier_delay_minutes,1
+WEATHER,Weather,weather_delay_minutes,2
+NATIONAL_AIRSPACE,National Airspace,national_airspace_delay_minutes,3
+SECURITY,Security,security_delay_minutes,4
+LATE_AIRCRAFT,Late Aircraft,late_aircraft_delay_minutes,5
