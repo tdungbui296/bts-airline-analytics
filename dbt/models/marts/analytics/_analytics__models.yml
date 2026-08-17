@@ -1,0 +1,933 @@
+version: 2
+
+models:
+
+  - name: mart_route_monthly_performance
+    description: >
+      Monthly route-performance analytical mart containing one row per
+      calendar month, origin airport, and destination airport. The model
+      aggregates flight-level BTS records into business-facing measures
+      covering traffic volume, service frequency, cancellations,
+      diversions, delay reliability, operating duration, taxi time, and
+      distance. The monthly grain was selected after profiling showed
+      that route-day aggregation produced 3,611,238 rows with only 3.9
+      flights per group, while route-month aggregation produced 139,287
+      rows with approximately 101 flights per group. The model is
+      materialized as a table because its highly aggregated size is small
+      relative to the underlying flight fact.
+
+    columns:
+
+      - name: flight_month
+        description: >
+          First calendar date of the month represented by the route
+          performance record.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+
+      - name: origin_airport_id
+        description: >
+          BTS airport identifier representing the route origin.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_id
+
+      - name: destination_airport_id
+        description: >
+          BTS airport identifier representing the route destination.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_id
+
+      - name: scheduled_flights
+        description: >
+          Total number of reported scheduled flights for the route
+          during the month.
+        data_tests:
+          - not_null
+
+      - name: operated_flights
+        description: >
+          Number of flights not classified as operationally cancelled.
+        data_tests:
+          - not_null
+
+      - name: cancelled_flights
+        description: >
+          Number of flights classified as operationally cancelled.
+        data_tests:
+          - not_null
+
+      - name: diverted_flights
+        description: >
+          Number of flights reported as diverted.
+        data_tests:
+          - not_null
+
+      - name: departure_observed_flights
+        description: >
+          Number of route-month flights with an observed departure-delay
+          value and therefore available for departure reliability
+          calculations.
+        data_tests:
+          - not_null
+
+      - name: arrival_observed_flights
+        description: >
+          Number of route-month flights with an observed arrival-delay
+          value and therefore available for arrival reliability
+          calculations.
+        data_tests:
+          - not_null
+
+      - name: departure_delayed_15_flights
+        description: >
+          Number of observed departures that departed at least
+          15 minutes later than scheduled.
+        data_tests:
+          - not_null
+
+      - name: arrival_delayed_15_flights
+        description: >
+          Number of observed arrivals that arrived at least
+          15 minutes later than scheduled.
+        data_tests:
+          - not_null
+
+      - name: active_service_days
+        description: >
+          Number of distinct calendar dates during the month on which
+          at least one scheduled flight was reported for the route. This
+          distinct count is non-additive across months.
+        data_tests:
+          - not_null
+
+      - name: reporting_carrier_count
+        description: >
+          Number of distinct reporting carriers operating the route
+          during the month. This distinct count is non-additive across
+          months.
+        data_tests:
+          - not_null
+
+      - name: cancellation_rate
+        description: >
+          Share of scheduled flights classified as operationally
+          cancelled, calculated as cancelled flights divided by
+          scheduled flights.
+        data_tests:
+          - not_null
+
+      - name: diversion_rate
+        description: >
+          Share of scheduled flights reported as diverted, calculated
+          as diverted flights divided by scheduled flights.
+        data_tests:
+          - not_null
+
+      - name: departure_delay_15_rate
+        description: >
+          Share of flights with observed departure-delay information
+          that departed at least 15 minutes late. The value is null when
+          no departure-delay observations are available for the
+          route-month.
+
+      - name: arrival_delay_15_rate
+        description: >
+          Share of flights with observed arrival-delay information that
+          arrived at least 15 minutes late. The value is null when no
+          arrival-delay observations are available for the route-month.
+
+      - name: on_time_arrival_rate
+        description: >
+          Share of flights with observed arrival-delay information that
+          arrived less than 15 minutes late. Calculated as one minus the
+          arrival 15-minute delay rate. The value is null when no
+          arrival-delay observations are available.
+
+      - name: total_departure_delay_minutes
+        description: >
+          Additive total of non-negative departure-delay minutes. Use with
+          departure_observed_flights to recalculate weighted delay averages
+          over several route-month rows.
+        data_tests:
+          - not_null
+
+      - name: total_arrival_delay_minutes
+        description: >
+          Additive total of non-negative arrival-delay minutes. Use with
+          arrival_observed_flights to recalculate weighted delay averages
+          over several route-month rows.
+        data_tests:
+          - not_null
+
+      - name: avg_departure_delay_minutes
+        description: >
+          Average non-negative departure delay in minutes among flights
+          with observed departure-delay information. Early departures
+          contribute zero delay minutes rather than negative values. This
+          monthly average is non-additive; recalculate it from total minutes
+          and observed flights when combining rows.
+
+      - name: avg_arrival_delay_minutes
+        description: >
+          Average non-negative arrival delay in minutes among flights
+          with observed arrival-delay information. Early arrivals
+          contribute zero delay minutes rather than negative values. This
+          monthly average is non-additive; recalculate it from total minutes
+          and observed flights when combining rows.
+
+      - name: scheduled_duration_eligible_flights
+        description: >
+          Additive count of flights with a valid non-negative scheduled
+          elapsed duration.
+        data_tests:
+          - not_null
+
+      - name: total_scheduled_elapsed_minutes
+        description: >
+          Additive total of analytically valid scheduled elapsed minutes.
+        data_tests:
+          - not_null
+
+      - name: avg_scheduled_elapsed_minutes
+        description: >
+          Average analytically valid scheduled gate-to-gate duration in
+          minutes for flights on the route during the month. Recalculate
+          across rows from total_scheduled_elapsed_minutes divided by
+          scheduled_duration_eligible_flights.
+
+      - name: actual_duration_eligible_flights
+        description: >
+          Additive count of flights eligible for actual-duration metrics
+          with an observed actual elapsed duration.
+        data_tests:
+          - not_null
+
+      - name: total_actual_elapsed_minutes
+        description: >
+          Additive total of actual elapsed minutes among eligible flights.
+        data_tests:
+          - not_null
+
+      - name: avg_actual_elapsed_minutes
+        description: >
+          Average actual gate-to-gate duration in minutes among flights
+          eligible for actual-duration metrics. Recalculate across rows from
+          total_actual_elapsed_minutes divided by
+          actual_duration_eligible_flights.
+
+      - name: air_time_observed_flights
+        description: >
+          Additive count of actual-duration-eligible flights with observed
+          air time.
+        data_tests:
+          - not_null
+
+      - name: total_air_time_minutes
+        description: >
+          Additive total of air-time minutes among eligible observed flights.
+        data_tests:
+          - not_null
+
+      - name: avg_air_time_minutes
+        description: >
+          Average airborne duration in minutes among flights eligible
+          for actual-duration metrics. Recalculate across rows from
+          total_air_time_minutes divided by air_time_observed_flights.
+
+      - name: taxi_out_observed_flights
+        description: >
+          Additive count of flights with an observed taxi-out duration.
+        data_tests:
+          - not_null
+
+      - name: total_taxi_out_minutes
+        description: >
+          Additive total of observed taxi-out minutes.
+        data_tests:
+          - not_null
+
+      - name: avg_taxi_out_minutes
+        description: >
+          Average taxi-out duration in minutes among flights with a
+          reported taxi-out value. Recalculate across rows from
+          total_taxi_out_minutes divided by taxi_out_observed_flights.
+
+      - name: taxi_in_observed_flights
+        description: >
+          Additive count of flights with an observed taxi-in duration.
+        data_tests:
+          - not_null
+
+      - name: total_taxi_in_minutes
+        description: >
+          Additive total of observed taxi-in minutes.
+        data_tests:
+          - not_null
+
+      - name: avg_taxi_in_minutes
+        description: >
+          Average taxi-in duration in minutes among flights with a
+          reported taxi-in value. Recalculate across rows from
+          total_taxi_in_minutes divided by taxi_in_observed_flights.
+
+      - name: distance_observed_flights
+        description: >
+          Additive count of flights with an observed distance.
+        data_tests:
+          - not_null
+
+      - name: total_distance_miles
+        description: >
+          Additive total of reported flight distance in statute miles.
+        data_tests:
+          - not_null
+
+      - name: avg_distance_miles
+        description: >
+          Average reported route distance in statute miles. Recalculate
+          across rows from total_distance_miles divided by
+          distance_observed_flights.
+
+
+  - name: mart_carrier_monthly_performance
+    description: >
+      Monthly carrier-performance analytical mart containing one row per
+      calendar month and BTS reporting carrier. The model summarizes
+      flight volume, network footprint, cancellations, diversions,
+      departure and arrival reliability, total delay burden, average
+      delay severity, flight duration, taxi time, and distance. The
+      current 2024-2025 carrier-month grain contains 348 rows and
+      summarizes approximately 40,462 flights per carrier-month on
+      average, making it a compact business-facing dataset for airline
+      performance comparison and trend analysis.
+
+    columns:
+
+      - name: flight_month
+        description: >
+          First calendar date of the month represented by the carrier
+          performance record.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+
+      - name: reporting_airline_dot_id
+        description: >
+          BTS reporting-airline DOT identifier representing the carrier
+          measured by this record.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: reporting_airline_dot_id
+
+      - name: scheduled_flights
+        description: >
+          Total number of reported scheduled flights operated by the
+          carrier during the month.
+        data_tests:
+          - not_null
+
+      - name: operated_flights
+        description: >
+          Number of carrier flights not classified as operationally
+          cancelled.
+        data_tests:
+          - not_null
+
+      - name: cancelled_flights
+        description: >
+          Number of carrier flights classified as operationally
+          cancelled.
+        data_tests:
+          - not_null
+
+      - name: diverted_flights
+        description: >
+          Number of carrier flights reported as diverted.
+        data_tests:
+          - not_null
+
+      - name: departure_observed_flights
+        description: >
+          Number of carrier flights with an observed departure-delay
+          value.
+        data_tests:
+          - not_null
+
+      - name: arrival_observed_flights
+        description: >
+          Number of carrier flights with an observed arrival-delay
+          value.
+        data_tests:
+          - not_null
+
+      - name: departure_delayed_15_flights
+        description: >
+          Number of observed departures that departed at least
+          15 minutes later than scheduled.
+        data_tests:
+          - not_null
+
+      - name: arrival_delayed_15_flights
+        description: >
+          Number of observed arrivals that arrived at least
+          15 minutes later than scheduled.
+        data_tests:
+          - not_null
+
+      - name: active_service_days
+        description: >
+          Number of distinct calendar dates during the month on which
+          the carrier reported at least one scheduled flight. This distinct
+          count is non-additive across months.
+        data_tests:
+          - not_null
+
+      - name: origin_airport_count
+        description: >
+          Number of distinct origin airports served by the carrier
+          during the month. This distinct count is non-additive across
+          months.
+        data_tests:
+          - not_null
+
+      - name: destination_airport_count
+        description: >
+          Number of distinct destination airports served by the carrier
+          during the month. This distinct count is non-additive across
+          months.
+        data_tests:
+          - not_null
+
+      - name: route_count
+        description: >
+          Number of distinct directional origin-to-destination routes
+          operated by the carrier during the month. This distinct count is
+          non-additive across months.
+        data_tests:
+          - not_null
+
+      - name: cancellation_rate
+        description: >
+          Share of scheduled carrier flights classified as operationally
+          cancelled.
+        data_tests:
+          - not_null
+
+      - name: diversion_rate
+        description: >
+          Share of scheduled carrier flights reported as diverted.
+        data_tests:
+          - not_null
+
+      - name: departure_delay_15_rate
+        description: >
+          Share of flights with observed departure-delay information
+          that departed at least 15 minutes late.
+
+      - name: arrival_delay_15_rate
+        description: >
+          Share of flights with observed arrival-delay information that
+          arrived at least 15 minutes late.
+
+      - name: on_time_arrival_rate
+        description: >
+          Share of flights with observed arrival-delay information that
+          arrived less than 15 minutes late. Calculated as one minus the
+          arrival 15-minute delay rate.
+
+      - name: total_departure_delay_minutes
+        description: >
+          Total non-negative departure-delay minutes accumulated across
+          flights with observed departure-delay information. Early
+          departures contribute zero minutes.
+        data_tests:
+          - not_null
+
+      - name: total_arrival_delay_minutes
+        description: >
+          Total non-negative arrival-delay minutes accumulated across
+          flights with observed arrival-delay information. Early
+          arrivals contribute zero minutes.
+        data_tests:
+          - not_null
+
+      - name: avg_departure_delay_minutes
+        description: >
+          Average non-negative departure-delay minutes among flights
+          with observed departure-delay information. This monthly average is
+          non-additive; recalculate it from total minutes and observed flights
+          when combining rows.
+
+      - name: avg_arrival_delay_minutes
+        description: >
+          Average non-negative arrival-delay minutes among flights with
+          observed arrival-delay information. This monthly average is
+          non-additive; recalculate it from total minutes and observed flights
+          when combining rows.
+
+      - name: scheduled_duration_eligible_flights
+        description: >
+          Additive count of flights with a valid non-negative scheduled
+          elapsed duration.
+        data_tests:
+          - not_null
+
+      - name: total_scheduled_elapsed_minutes
+        description: >
+          Additive total of analytically valid scheduled elapsed minutes.
+        data_tests:
+          - not_null
+
+      - name: avg_scheduled_elapsed_minutes
+        description: >
+          Average analytically valid scheduled gate-to-gate duration in
+          minutes. Recalculate across rows from
+          total_scheduled_elapsed_minutes divided by
+          scheduled_duration_eligible_flights.
+
+      - name: actual_duration_eligible_flights
+        description: >
+          Additive count of flights eligible for actual-duration metrics
+          with an observed actual elapsed duration.
+        data_tests:
+          - not_null
+
+      - name: total_actual_elapsed_minutes
+        description: >
+          Additive total of actual elapsed minutes among eligible flights.
+        data_tests:
+          - not_null
+
+      - name: avg_actual_elapsed_minutes
+        description: >
+          Average actual gate-to-gate duration among flights eligible
+          for actual-duration metrics. Recalculate across rows from
+          total_actual_elapsed_minutes divided by
+          actual_duration_eligible_flights.
+
+      - name: air_time_observed_flights
+        description: >
+          Additive count of actual-duration-eligible flights with observed
+          air time.
+        data_tests:
+          - not_null
+
+      - name: total_air_time_minutes
+        description: >
+          Additive total of air-time minutes among eligible observed flights.
+        data_tests:
+          - not_null
+
+      - name: avg_air_time_minutes
+        description: >
+          Average airborne duration among flights eligible for
+          actual-duration metrics. Recalculate across rows from
+          total_air_time_minutes divided by air_time_observed_flights.
+
+      - name: taxi_out_observed_flights
+        description: >
+          Additive count of flights with an observed taxi-out duration.
+        data_tests:
+          - not_null
+
+      - name: total_taxi_out_minutes
+        description: >
+          Additive total of observed taxi-out minutes.
+        data_tests:
+          - not_null
+
+      - name: avg_taxi_out_minutes
+        description: >
+          Average taxi-out duration in minutes among flights with a
+          reported taxi-out value. Recalculate across rows from
+          total_taxi_out_minutes divided by taxi_out_observed_flights.
+
+      - name: taxi_in_observed_flights
+        description: >
+          Additive count of flights with an observed taxi-in duration.
+        data_tests:
+          - not_null
+
+      - name: total_taxi_in_minutes
+        description: >
+          Additive total of observed taxi-in minutes.
+        data_tests:
+          - not_null
+
+      - name: avg_taxi_in_minutes
+        description: >
+          Average taxi-in duration in minutes among flights with a
+          reported taxi-in value. Recalculate across rows from
+          total_taxi_in_minutes divided by taxi_in_observed_flights.
+
+      - name: distance_observed_flights
+        description: >
+          Additive count of flights with an observed distance.
+        data_tests:
+          - not_null
+
+      - name: total_distance_miles
+        description: >
+          Additive total of reported flight distance in statute miles.
+        data_tests:
+          - not_null
+
+      - name: avg_distance_miles
+        description: >
+          Average reported flight distance in statute miles for the
+          carrier during the month. Recalculate across rows from
+          total_distance_miles divided by distance_observed_flights.
+
+
+  - name: mart_airport_monthly_performance
+    description: >
+      Monthly airport-performance analytical mart containing one row per
+      calendar month and BTS airport. Departure-side and arrival-side
+      metrics are intentionally modeled separately because an airport
+      plays different analytical roles as a flight origin and a flight
+      destination. The mart summarizes outbound cancellations,
+      departure reliability, taxi-out performance, destination reach,
+      inbound diversions, arrival reliability, taxi-in performance, and
+      origin reach. The current 2024-2025 dataset produces 8,112
+      airport-month rows, averaging approximately 1,736 scheduled
+      departures and 1,736 scheduled arrivals per airport-month.
+
+    columns:
+
+      - name: flight_month
+        description: >
+          First calendar date of the month represented by the airport
+          performance record.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+
+      - name: airport_id
+        description: >
+          BTS airport identifier representing the airport measured by
+          this monthly performance record.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_id
+
+      - name: scheduled_departures
+        description: >
+          Number of flights scheduled to depart from the airport during
+          the month.
+        data_tests:
+          - not_null
+
+      - name: operated_departures
+        description: >
+          Number of scheduled departures not classified as
+          operationally cancelled.
+        data_tests:
+          - not_null
+
+      - name: cancelled_departures
+        description: >
+          Number of scheduled departures classified as operationally
+          cancelled.
+        data_tests:
+          - not_null
+
+      - name: departure_observed_flights
+        description: >
+          Number of scheduled departures with an observed departure-delay
+          value and therefore available for departure reliability
+          calculations.
+        data_tests:
+          - not_null
+
+      - name: departure_delayed_15_flights
+        description: >
+          Number of observed departures that departed at least
+          15 minutes later than scheduled.
+        data_tests:
+          - not_null
+
+      - name: departing_carrier_count
+        description: >
+          Number of distinct BTS reporting carriers with scheduled
+          departures from the airport during the month.
+        data_tests:
+          - not_null
+
+      - name: destination_count
+        description: >
+          Number of distinct destination airports reached by scheduled
+          departures from the airport during the month.
+        data_tests:
+          - not_null
+
+      - name: departure_cancellation_rate
+        description: >
+          Share of scheduled departures classified as operationally
+          cancelled. The value is null when the airport has no scheduled
+          departures in the month.
+
+      - name: departure_delay_15_rate
+        description: >
+          Share of departures with observed departure-delay information
+          that departed at least 15 minutes late. The value is null when
+          no departure-delay observations are available.
+
+      - name: total_departure_delay_minutes
+        description: >
+          Additive total of non-negative departure-delay minutes for flights
+          scheduled to depart from the airport.
+        data_tests:
+          - not_null
+
+      - name: avg_departure_delay_minutes
+        description: >
+          Average non-negative departure delay in minutes among flights
+          with observed departure-delay information. Early departures
+          contribute zero minutes. Recalculate across rows from
+          total_departure_delay_minutes divided by
+          departure_observed_flights.
+
+      - name: taxi_out_observed_flights
+        description: >
+          Additive count of scheduled departures with an observed taxi-out
+          duration.
+        data_tests:
+          - not_null
+
+      - name: total_taxi_out_minutes
+        description: >
+          Additive total of observed taxi-out minutes.
+        data_tests:
+          - not_null
+
+      - name: avg_taxi_out_minutes
+        description: >
+          Average taxi-out duration in minutes among flights with a
+          reported taxi-out value. Recalculate across rows from
+          total_taxi_out_minutes divided by taxi_out_observed_flights.
+
+      - name: scheduled_arrivals
+        description: >
+          Number of flights scheduled to arrive at the airport during
+          the month.
+        data_tests:
+          - not_null
+
+      - name: diverted_inbound_flights
+        description: >
+          Number of flights scheduled to arrive at the airport that BTS
+          reports as diverted. This metric represents disruption to
+          flights originally destined for the airport and does not imply
+          that the diverted aircraft physically landed at that airport.
+        data_tests:
+          - not_null
+
+      - name: arrival_observed_flights
+        description: >
+          Number of inbound scheduled flights with an observed
+          arrival-delay value and therefore available for arrival
+          reliability calculations.
+        data_tests:
+          - not_null
+
+      - name: arrival_delayed_15_flights
+        description: >
+          Number of observed arrivals that arrived at least
+          15 minutes later than scheduled.
+        data_tests:
+          - not_null
+
+      - name: arriving_carrier_count
+        description: >
+          Number of distinct BTS reporting carriers with flights
+          scheduled to arrive at the airport during the month.
+        data_tests:
+          - not_null
+
+      - name: origin_count
+        description: >
+          Number of distinct origin airports represented by scheduled
+          inbound flights during the month.
+        data_tests:
+          - not_null
+
+      - name: inbound_diversion_rate
+        description: >
+          Share of scheduled inbound flights reported as diverted. The
+          value is null when the airport has no scheduled arrivals in
+          the month.
+
+      - name: arrival_delay_15_rate
+        description: >
+          Share of inbound flights with observed arrival-delay
+          information that arrived at least 15 minutes late. The value
+          is null when no arrival-delay observations are available.
+
+      - name: on_time_arrival_rate
+        description: >
+          Share of inbound flights with observed arrival-delay
+          information that arrived less than 15 minutes late. Calculated
+          as one minus the arrival 15-minute delay rate.
+
+      - name: total_arrival_delay_minutes
+        description: >
+          Additive total of non-negative arrival-delay minutes for flights
+          scheduled to arrive at the airport.
+        data_tests:
+          - not_null
+
+      - name: avg_arrival_delay_minutes
+        description: >
+          Average non-negative arrival delay in minutes among flights
+          with observed arrival-delay information. Early arrivals
+          contribute zero minutes. Recalculate across rows from
+          total_arrival_delay_minutes divided by arrival_observed_flights.
+
+      - name: taxi_in_observed_flights
+        description: >
+          Additive count of scheduled arrivals with an observed taxi-in
+          duration.
+        data_tests:
+          - not_null
+
+      - name: total_taxi_in_minutes
+        description: >
+          Additive total of observed taxi-in minutes.
+        data_tests:
+          - not_null
+
+      - name: avg_taxi_in_minutes
+        description: >
+          Average taxi-in duration in minutes among flights with a
+          reported taxi-in value. Recalculate across rows from
+          total_taxi_in_minutes divided by taxi_in_observed_flights.
+
+
+  - name: mart_carrier_monthly_delay_cause
+    description: >
+      Monthly carrier delay-cause analytical mart containing one row per
+      calendar month, BTS reporting carrier, and standardized delay
+      cause. The model aggregates the sparse flight-delay-cause fact into
+      cause-specific affected-flight counts, attributable delay minutes,
+      severity measures, and each cause's share of the carrier's total
+      attributed delay burden. A flight can contribute to more than one
+      delay cause, so affected_flights must not be summed across causes
+      and interpreted as unique delayed flights. Delay-minute shares,
+      however, form an additive decomposition of each carrier-month's
+      attributed delay burden.
+
+    columns:
+
+      - name: flight_month
+        description: >
+          First calendar date of the month represented by the carrier
+          delay-cause record.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+
+      - name: reporting_airline_dot_id
+        description: >
+          BTS reporting-airline DOT identifier representing the carrier
+          associated with the delay-cause record.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: reporting_airline_dot_id
+
+      - name: delay_cause_key
+        description: >
+          Standardized BTS delay-cause identifier associated with the
+          attributable delay minutes.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_delay_cause')
+                field: delay_cause_key
+          - accepted_values:
+              arguments:
+                values:
+                  - CARRIER
+                  - WEATHER
+                  - NATIONAL_AIRSPACE
+                  - SECURITY
+                  - LATE_AIRCRAFT
+
+      - name: affected_flights
+        description: >
+          Number of flight-cause records with positive attributed delay
+          minutes for the carrier, month, and cause. A single flight can
+          appear under multiple causes, so this measure is not additive
+          across delay causes.
+        data_tests:
+          - not_null
+
+      - name: total_delay_minutes
+        description: >
+          Total positive delay minutes attributed to the specified cause
+          for the carrier during the month.
+        data_tests:
+          - not_null
+
+      - name: avg_delay_minutes_per_affected_flight
+        description: >
+          Average positive delay minutes attributed to the cause among
+          flights affected by that cause.
+        data_tests:
+          - not_null
+
+      - name: max_delay_minutes
+        description: >
+          Maximum positive number of minutes attributed to this cause on
+          a single flight during the carrier-month.
+        data_tests:
+          - not_null
+
+      - name: carrier_total_attributed_delay_minutes
+        description: >
+          Total positive delay minutes attributed across all five BTS
+          delay causes for the carrier during the month. The value repeats
+          on each cause row and must not be summed across delay causes.
+        data_tests:
+          - not_null
+
+      - name: cause_delay_minute_share_within_carrier_month
+        description: >
+          Share of the carrier-month's total attributed delay minutes
+          contributed by the specified cause. Cause shares for a
+          carrier-month sum to approximately one, subject to floating
+          point precision. This field is non-additive across carriers and
+          months; selected-period shares must be recalculated from additive
+          total_delay_minutes.
+        data_tests:
+          - not_null
