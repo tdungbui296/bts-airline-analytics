@@ -1,5 +1,6 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
+import argparse
 import csv
 import gzip
 import hashlib
@@ -14,48 +15,23 @@ import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-INPUT_DIR = (
-    PROJECT_ROOT
-    / "data"
-    / "processed"
-    / "2025"
-)
-
-OUTPUT_DIR = (
-    PROJECT_ROOT
-    / "data"
-    / "load"
-    / "2025"
-)
-
 SCHEMA_PATH = (
     PROJECT_ROOT
     / "config"
     / "bq_flights_schema.json"
 )
 
-PROCESSED_MANIFEST_PATH = (
-    PROJECT_ROOT
-    / "evidence"
-    / "source"
-    / "2025_processed_manifest.csv"
-)
-
-LOAD_MANIFEST_PATH = (
-    PROJECT_ROOT
-    / "evidence"
-    / "source"
-    / "2025_bq_load_manifest.csv"
-)
-
-SUMMARY_PATH = (
-    PROJECT_ROOT
-    / "analysis"
-    / "profiling"
-    / "2025_bq_load_files_summary.json"
-)
-
 CHUNK_SIZE = 100_000
+
+
+def parse_year(value: str) -> int:
+    """Validate a four-digit reporting year."""
+    if len(value) != 4 or not value.isdigit():
+        raise argparse.ArgumentTypeError(
+            "year must be a four-digit value such as 2024"
+        )
+
+    return int(value)
 
 
 def calculate_sha256(file_path: Path) -> str:
@@ -72,10 +48,13 @@ def calculate_sha256(file_path: Path) -> str:
     return sha256.hexdigest().upper()
 
 
-def extract_month(file_path: Path) -> int:
-    """Extract month from bts_2025_MM_core.csv.gz."""
+def extract_month(
+    file_path: Path,
+    year: int,
+) -> int:
+    """Extract month from bts_YEAR_MM_core.csv.gz."""
     match = re.search(
-        r"bts_2025_(\d{2})_core\.csv\.gz$",
+        rf"bts_{year}_(\d{{2}})_core\.csv\.gz$",
         file_path.name,
     )
 
@@ -151,10 +130,12 @@ def load_schema() -> list[dict[str, str]]:
     return schema
 
 
-def load_processed_manifest() -> dict[int, dict[str, str]]:
+def load_processed_manifest(
+    processed_manifest_path: Path,
+) -> dict[int, dict[str, str]]:
     """Load expected rows and checksums for projected files."""
     manifest = pd.read_csv(
-        PROCESSED_MANIFEST_PATH,
+        processed_manifest_path,
         dtype="string",
     )
 
@@ -284,6 +265,7 @@ def normalize_month(
     schema: list[dict[str, str]],
     expected_rows: int,
     expected_input_hash: str,
+    year: int,
 ) -> dict[str, object]:
     """Normalize one monthly file for BigQuery loading."""
 
@@ -423,9 +405,10 @@ def normalize_month(
         )
 
     return {
-        "reporting_year": 2025,
+        "reporting_year": year,
         "reporting_month": extract_month(
-            input_path
+            input_path,
+            year,
         ),
         "input_file": str(
             input_path.relative_to(
@@ -461,10 +444,62 @@ def normalize_month(
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Generate BigQuery-ready BTS load files for one "
+            "reporting year."
+        )
+    )
+
+    parser.add_argument(
+        "--year",
+        required=True,
+        type=parse_year,
+        help="Four-digit source year, for example 2024 or 2025.",
+    )
+
+    args = parser.parse_args()
+    year = args.year
+
+    input_dir = (
+        PROJECT_ROOT
+        / "data"
+        / "processed"
+        / str(year)
+    )
+
+    output_dir = (
+        PROJECT_ROOT
+        / "data"
+        / "load"
+        / str(year)
+    )
+
+    processed_manifest_path = (
+        PROJECT_ROOT
+        / "evidence"
+        / "source"
+        / f"{year}_processed_manifest.csv"
+    )
+
+    load_manifest_path = (
+        PROJECT_ROOT
+        / "evidence"
+        / "source"
+        / f"{year}_bq_load_manifest.csv"
+    )
+
+    summary_path = (
+        PROJECT_ROOT
+        / "analysis"
+        / "profiling"
+        / f"{year}_bq_load_files_summary.json"
+    )
+
     required_paths = [
-        INPUT_DIR,
+        input_dir,
         SCHEMA_PATH,
-        PROCESSED_MANIFEST_PATH,
+        processed_manifest_path,
     ]
 
     for path in required_paths:
@@ -474,13 +509,18 @@ def main() -> None:
             )
 
     schema = load_schema()
-    manifest = load_processed_manifest()
+    manifest = load_processed_manifest(
+        processed_manifest_path
+    )
 
     input_files = sorted(
-        INPUT_DIR.glob(
-            "bts_2025_*_core.csv.gz"
+        input_dir.glob(
+            f"bts_{year}_*_core.csv.gz"
         ),
-        key=extract_month,
+        key=lambda path: extract_month(
+            path,
+            year,
+        ),
     )
 
     if len(input_files) != 12:
@@ -489,17 +529,17 @@ def main() -> None:
             f"{len(input_files)}."
         )
 
-    OUTPUT_DIR.mkdir(
+    output_dir.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    LOAD_MANIFEST_PATH.parent.mkdir(
+    load_manifest_path.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    SUMMARY_PATH.parent.mkdir(
+    summary_path.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
@@ -508,7 +548,8 @@ def main() -> None:
 
     for input_path in input_files:
         month = extract_month(
-            input_path
+            input_path,
+            year,
         )
 
         expected_rows = int(
@@ -524,12 +565,12 @@ def main() -> None:
         )
 
         output_path = (
-            OUTPUT_DIR
-            / f"bts_2025_{month:02d}_bq.csv.gz"
+            output_dir
+            / f"bts_{year}_{month:02d}_bq.csv.gz"
         )
 
         print(
-            f"Normalizing 2025-{month:02d} "
+            f"Normalizing {year}-{month:02d} "
             f"({expected_rows:,} rows)...",
             flush=True,
         )
@@ -540,12 +581,13 @@ def main() -> None:
             schema=schema,
             expected_rows=expected_rows,
             expected_input_hash=expected_hash,
+            year=year,
         )
 
         output_rows.append(result)
 
         print(
-            f"2025-{month:02d}: completed, "
+            f"{year}-{month:02d}: completed, "
             f"{result['output_size_mb']} MB",
             flush=True,
         )
@@ -565,7 +607,7 @@ def main() -> None:
         "output_sha256",
     ]
 
-    with LOAD_MANIFEST_PATH.open(
+    with load_manifest_path.open(
         "w",
         encoding="utf-8",
         newline="",
@@ -597,7 +639,7 @@ def main() -> None:
         "generated_at_utc": datetime.now(
             timezone.utc
         ).isoformat(),
-        "year": 2025,
+        "year": year,
         "monthly_output_count": len(
             output_rows
         ),
@@ -623,18 +665,18 @@ def main() -> None:
             2,
         ),
         "load_manifest": str(
-            LOAD_MANIFEST_PATH.relative_to(
+            load_manifest_path.relative_to(
                 PROJECT_ROOT
             )
         ),
         "output_directory": str(
-            OUTPUT_DIR.relative_to(
+            output_dir.relative_to(
                 PROJECT_ROOT
             )
         ),
     }
 
-    SUMMARY_PATH.write_text(
+    summary_path.write_text(
         json.dumps(
             summary,
             indent=2,
@@ -644,7 +686,7 @@ def main() -> None:
 
     print()
     print(
-        "2025 BigQuery load-file generation completed."
+        f"{year} BigQuery load-file generation completed."
     )
     print(
         f"Monthly outputs: "
@@ -667,10 +709,10 @@ def main() -> None:
         f"{summary['total_output_size_mb']} MB"
     )
     print(
-        f"Manifest: {LOAD_MANIFEST_PATH}"
+        f"Manifest: {load_manifest_path}"
     )
     print(
-        f"Summary: {SUMMARY_PATH}"
+        f"Summary: {summary_path}"
     )
 
 
