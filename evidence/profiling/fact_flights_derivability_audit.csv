@@ -1,0 +1,10 @@
+field,derived_from,rows_checked,null_mismatches,value_mismatches,decision
+departure_delay_minutes,departure_delay_minutes_signed,14080680,0,0,remove_from_fact
+arrival_delay_minutes,arrival_delay_minutes_signed,14080680,0,0,remove_from_fact
+is_departure_delayed_15_minutes,departure_delay_minutes,14080680,0,0,keep_in_fact
+is_arrival_delayed_15_minutes,arrival_delay_minutes,14080680,0,0,keep_in_fact
+departure_delay_group,departure_delay_minutes_signed,14080680,0,0,remove_from_fact
+arrival_delay_group,arrival_delay_minutes_signed,14080680,0,0,remove_from_fact
+departure_time_block,scheduled_departure_hhmm,14080680,0,0,remove_from_fact
+arrival_time_block,scheduled_arrival_hhmm,14080680,0,0,remove_from_fact
+distance_group,distance_miles,14080680,0,0,remove_from_fact
