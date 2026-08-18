@@ -4,6 +4,7 @@ import argparse
 import csv
 import gzip
 import hashlib
+import io
 import json
 import re
 from datetime import datetime, timezone
@@ -312,14 +313,21 @@ def normalize_month(
     write_header = True
 
     try:
-        with gzip.open(
-            temporary_path,
-            mode="wt",
-            encoding="utf-8",
-            newline="",
-            compresslevel=6,
-        ) as output_file:
-
+        with (
+            temporary_path.open("wb") as raw_output_file,
+            gzip.GzipFile(
+                filename=temporary_path.name,
+                mode="wb",
+                compresslevel=6,
+                fileobj=raw_output_file,
+                mtime=0,
+            ) as gzip_output_file,
+            io.TextIOWrapper(
+                gzip_output_file,
+                encoding="utf-8",
+                newline="",
+            ) as output_file,
+        ):
             reader = pd.read_csv(
                 input_path,
                 compression="gzip",
