@@ -1,5 +1,6 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
+import argparse
 import csv
 import json
 import re
@@ -12,31 +13,10 @@ import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-RAW_DIR = (
-    PROJECT_ROOT
-    / "data"
-    / "raw"
-    / "2025"
-)
-
 COLUMN_MANIFEST = (
     PROJECT_ROOT
     / "config"
     / "bts_core_columns.txt"
-)
-
-OUTPUT_CSV = (
-    PROJECT_ROOT
-    / "analysis"
-    / "profiling"
-    / "2025_monthly_validation_summary.csv"
-)
-
-OUTPUT_JSON = (
-    PROJECT_ROOT
-    / "analysis"
-    / "profiling"
-    / "2025_batch_validation_summary.json"
 )
 
 CHUNK_SIZE = 100_000
@@ -76,6 +56,25 @@ VALIDATION_COLUMNS = list(
 )
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Validate one annual batch of monthly BTS "
+            "On-Time Performance ZIP files."
+        )
+    )
+
+    parser.add_argument(
+        "--year",
+        type=int,
+        choices=(2024, 2025),
+        required=True,
+        help="Reporting year to validate.",
+    )
+
+    return parser.parse_args()
+
+
 def load_manifest() -> list[str]:
     columns = [
         line.strip()
@@ -98,10 +97,13 @@ def load_manifest() -> list[str]:
     return columns
 
 
-def extract_month(file_path: Path) -> int:
+def extract_month(
+    file_path: Path,
+    reporting_year: int,
+) -> int:
     match = re.search(
-        r"_2025_(\d+)\.zip$",
-        file_path.name
+        rf"_{reporting_year}_(\d+)\.zip$",
+        file_path.name,
     )
 
     if not match:
@@ -115,12 +117,15 @@ def extract_month(file_path: Path) -> int:
 def validate_file(
     file_path: Path,
     required_columns: list[str],
+    reporting_year: int,
 ) -> dict[str, object]:
-
-    expected_month = extract_month(file_path)
+    expected_month = extract_month(
+        file_path,
+        reporting_year,
+    )
 
     result: dict[str, object] = {
-        "reporting_year": 2025,
+        "reporting_year": reporting_year,
         "reporting_month": expected_month,
         "source_file": file_path.name,
         "zip_ok": False,
@@ -170,7 +175,7 @@ def validate_file(
                 with TextIOWrapper(
                     raw_file,
                     encoding="utf-8-sig",
-                    newline=""
+                    newline="",
                 ) as text_file:
                     header_reader = csv.reader(text_file)
                     source_headers = next(header_reader)
@@ -234,9 +239,8 @@ def validate_file(
                 with TextIOWrapper(
                     raw_file,
                     encoding="utf-8-sig",
-                    newline=""
+                    newline="",
                 ) as text_file:
-
                     reader = pd.read_csv(
                         text_file,
                         usecols=VALIDATION_COLUMNS,
@@ -280,14 +284,18 @@ def validate_file(
                             & months.notna()
                         )
 
-                        result["year_mismatch_rows"] += int(
+                        result[
+                            "year_mismatch_rows"
+                        ] += int(
                             (
                                 years[valid_year_rows]
-                                != 2025
+                                != reporting_year
                             ).sum()
                         )
 
-                        result["year_mismatch_rows"] += int(
+                        result[
+                            "year_mismatch_rows"
+                        ] += int(
                             (
                                 years[valid_year_rows]
                                 != flight_dates[
@@ -296,14 +304,18 @@ def validate_file(
                             ).sum()
                         )
 
-                        result["month_mismatch_rows"] += int(
+                        result[
+                            "month_mismatch_rows"
+                        ] += int(
                             (
                                 months[valid_month_rows]
                                 != expected_month
                             ).sum()
                         )
 
-                        result["month_mismatch_rows"] += int(
+                        result[
+                            "month_mismatch_rows"
+                        ] += int(
                             (
                                 months[valid_month_rows]
                                 != flight_dates[
@@ -326,7 +338,7 @@ def validate_file(
 
                         complete_keys = chunk.loc[
                             ~key_null_mask,
-                            CANDIDATE_KEY
+                            CANDIDATE_KEY,
                         ]
 
                         key_hashes = (
@@ -481,22 +493,54 @@ def validate_file(
 
 
 def main() -> None:
-    if not RAW_DIR.exists():
+    args = parse_args()
+    reporting_year = args.year
+
+    raw_dir = (
+        PROJECT_ROOT
+        / "data"
+        / "raw"
+        / str(reporting_year)
+    )
+
+    output_csv = (
+        PROJECT_ROOT
+        / "analysis"
+        / "profiling"
+        / f"{reporting_year}_monthly_validation_summary.csv"
+    )
+
+    output_json = (
+        PROJECT_ROOT
+        / "analysis"
+        / "profiling"
+        / f"{reporting_year}_batch_validation_summary.json"
+    )
+
+    if not raw_dir.exists():
         raise FileNotFoundError(
-            f"Raw directory not found: {RAW_DIR}"
+            f"Raw directory not found: {raw_dir}"
         )
 
     required_columns = load_manifest()
 
     zip_files = sorted(
-        RAW_DIR.glob(
-            "On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2025_*.zip"
+        raw_dir.glob(
+            "On_Time_Reporting_Carrier_"
+            "On_Time_Performance_1987_present_"
+            f"{reporting_year}_*.zip"
         ),
-        key=extract_month,
+        key=lambda file_path: extract_month(
+            file_path,
+            reporting_year,
+        ),
     )
 
     observed_months = [
-        extract_month(file_path)
+        extract_month(
+            file_path,
+            reporting_year,
+        )
         for file_path in zip_files
     ]
 
@@ -508,7 +552,7 @@ def main() -> None:
 
     if len(zip_files) != 12 or missing_months:
         raise ValueError(
-            "The 2025 source batch is incomplete. "
+            f"The {reporting_year} source batch is incomplete. "
             f"Files: {len(zip_files)}, "
             f"missing months: {missing_months}"
         )
@@ -516,16 +560,20 @@ def main() -> None:
     results = []
 
     for file_path in zip_files:
-        month = extract_month(file_path)
+        month = extract_month(
+            file_path,
+            reporting_year,
+        )
 
         print(
-            f"Validating 2025-{month:02d}...",
-            flush=True
+            f"Validating {reporting_year}-{month:02d}...",
+            flush=True,
         )
 
         result = validate_file(
             file_path,
             required_columns,
+            reporting_year,
         )
 
         results.append(result)
@@ -537,20 +585,20 @@ def main() -> None:
         )
 
         print(
-            f"2025-{month:02d}: {status}, "
+            f"{reporting_year}-{month:02d}: {status}, "
             f"rows={int(result['row_count']):,}",
             flush=True,
         )
 
     result_df = pd.DataFrame(results)
 
-    OUTPUT_CSV.parent.mkdir(
+    output_csv.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
 
     result_df.to_csv(
-        OUTPUT_CSV,
+        output_csv,
         index=False,
         encoding="utf-8",
     )
@@ -565,7 +613,7 @@ def main() -> None:
     )
 
     summary = {
-        "year": 2025,
+        "year": reporting_year,
         "monthly_file_count": len(zip_files),
         "missing_months": missing_months,
         "total_rows": int(
@@ -583,11 +631,11 @@ def main() -> None:
         ),
         "review_months": review_months,
         "monthly_validation_output": str(
-            OUTPUT_CSV.relative_to(PROJECT_ROOT)
+            output_csv.relative_to(PROJECT_ROOT)
         ),
     }
 
-    OUTPUT_JSON.write_text(
+    output_json.write_text(
         json.dumps(
             summary,
             indent=2,
@@ -596,7 +644,9 @@ def main() -> None:
     )
 
     print()
-    print("2025 batch validation completed.")
+    print(
+        f"{reporting_year} batch validation completed."
+    )
     print(
         f"Total rows: {summary['total_rows']:,}"
     )
@@ -608,8 +658,8 @@ def main() -> None:
         "Review months: "
         f"{summary['review_months']}"
     )
-    print(f"CSV output: {OUTPUT_CSV}")
-    print(f"JSON output: {OUTPUT_JSON}")
+    print(f"CSV output: {output_csv}")
+    print(f"JSON output: {output_json}")
 
 
 if __name__ == "__main__":
