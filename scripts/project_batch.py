@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import csv
 import gzip
 import hashlib
@@ -13,53 +14,87 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-RAW_DIR = (
-    PROJECT_ROOT
-    / "data"
-    / "raw"
-    / "2024"
-)
-
-OUTPUT_DIR = (
-    PROJECT_ROOT
-    / "data"
-    / "processed"
-    / "2024"
-)
-
 COLUMN_MANIFEST = (
     PROJECT_ROOT
     / "config"
     / "bts_core_columns.txt"
 )
 
-SOURCE_MANIFEST = (
-    PROJECT_ROOT
-    / "evidence"
-    / "source"
-    / "2024_source_manifest.csv"
-)
+APPROVED_REVIEW_CONDITIONS = {
+    2024: {
+        7: {
+            "delayed_missing_cause_rows": "2",
+            "candidate_key_null_rows": "0",
+        },
+        8: {
+            "delayed_missing_cause_rows": "0",
+            "candidate_key_null_rows": "1",
+        },
+    },
+    2025: {},
+}
 
-VALIDATION_SUMMARY = (
-    PROJECT_ROOT
-    / "analysis"
-    / "profiling"
-    / "2024_monthly_validation_summary.csv"
-)
 
-PROJECTION_MANIFEST = (
-    PROJECT_ROOT
-    / "evidence"
-    / "source"
-    / "2024_processed_manifest.csv"
-)
+def parse_arguments() -> argparse.Namespace:
+    """Parse the requested reporting year."""
+    parser = argparse.ArgumentParser(
+        description=(
+            "Project one validated annual batch of monthly BTS "
+            "On-Time Performance ZIP files."
+        )
+    )
 
-PROJECTION_SUMMARY = (
-    PROJECT_ROOT
-    / "analysis"
-    / "profiling"
-    / "2024_projection_summary.json"
-)
+    parser.add_argument(
+        "--year",
+        type=int,
+        choices=(2024, 2025),
+        required=True,
+        help="Reporting year to project.",
+    )
+
+    return parser.parse_args()
+
+
+def build_paths(year: int) -> dict[str, Path]:
+    """Build all year-specific input and output paths."""
+    return {
+        "raw_dir": (
+            PROJECT_ROOT
+            / "data"
+            / "raw"
+            / str(year)
+        ),
+        "output_dir": (
+            PROJECT_ROOT
+            / "data"
+            / "processed"
+            / str(year)
+        ),
+        "source_manifest": (
+            PROJECT_ROOT
+            / "evidence"
+            / "source"
+            / f"{year}_source_manifest.csv"
+        ),
+        "validation_summary": (
+            PROJECT_ROOT
+            / "analysis"
+            / "profiling"
+            / f"{year}_monthly_validation_summary.csv"
+        ),
+        "projection_manifest": (
+            PROJECT_ROOT
+            / "evidence"
+            / "source"
+            / f"{year}_processed_manifest.csv"
+        ),
+        "projection_summary": (
+            PROJECT_ROOT
+            / "analysis"
+            / "profiling"
+            / f"{year}_projection_summary.json"
+        ),
+    }
 
 
 def calculate_sha256(file_path: Path) -> str:
@@ -76,10 +111,13 @@ def calculate_sha256(file_path: Path) -> str:
     return sha256.hexdigest().upper()
 
 
-def extract_month(file_path: Path) -> int:
+def extract_month(
+    file_path: Path,
+    year: int,
+) -> int:
     """Extract the reporting month from a BTS ZIP filename."""
     match = re.search(
-        r"_2024_(\d+)\.zip$",
+        rf"_{year}_(\d+)\.zip$",
         file_path.name,
     )
 
@@ -121,9 +159,11 @@ def load_core_columns() -> list[str]:
     return columns
 
 
-def load_source_manifest() -> dict[int, dict[str, str]]:
+def load_source_manifest(
+    source_manifest_path: Path,
+) -> dict[int, dict[str, str]]:
     """Load source checksums and metadata by month."""
-    with SOURCE_MANIFEST.open(
+    with source_manifest_path.open(
         "r",
         encoding="utf-8-sig",
         newline="",
@@ -137,15 +177,18 @@ def load_source_manifest() -> dict[int, dict[str, str]]:
 
     if sorted(manifest) != list(range(1, 13)):
         raise ValueError(
-            "The source manifest does not contain months 1â€“12."
+            "The source manifest does not contain months 1–12."
         )
 
     return manifest
 
 
-def load_validation_results() -> dict[int, dict[str, str]]:
-    """Load expected row counts from batch validation."""
-    with VALIDATION_SUMMARY.open(
+def load_validation_results(
+    validation_summary_path: Path,
+    year: int,
+) -> dict[int, dict[str, str]]:
+    """Load and enforce annual validation results."""
+    with validation_summary_path.open(
         "r",
         encoding="utf-8-sig",
         newline="",
@@ -159,19 +202,12 @@ def load_validation_results() -> dict[int, dict[str, str]]:
 
     if sorted(results) != list(range(1, 13)):
         raise ValueError(
-            "The validation results do not contain months 1â€“12."
+            "The validation results do not contain months 1–12."
         )
 
-    approved_review_conditions = {
-        7: {
-            "delayed_missing_cause_rows": "2",
-            "candidate_key_null_rows": "0",
-        },
-        8: {
-            "delayed_missing_cause_rows": "0",
-            "candidate_key_null_rows": "1",
-        },
-    }
+    approved_conditions_by_month = (
+        APPROVED_REVIEW_CONDITIONS[year]
+    )
 
     for month, row in results.items():
         review_required = (
@@ -183,7 +219,7 @@ def load_validation_results() -> dict[int, dict[str, str]]:
 
         if review_required:
             expected_conditions = (
-                approved_review_conditions.get(month)
+                approved_conditions_by_month.get(month)
             )
 
             if expected_conditions is None:
@@ -213,7 +249,7 @@ def load_validation_results() -> dict[int, dict[str, str]]:
                 )
 
             print(
-                f"2024-{month:02d}: manually reviewed "
+                f"{year}-{month:02d}: manually reviewed "
                 "conditions approved."
             )
 
@@ -228,13 +264,14 @@ def load_validation_results() -> dict[int, dict[str, str]]:
 
 def project_month(
     source_zip: Path,
+    output_dir: Path,
+    year: int,
     month: int,
     core_columns: list[str],
     expected_rows: int,
     expected_source_hash: str,
 ) -> dict[str, object]:
     """Project one validated monthly ZIP into CSV.GZ."""
-
     actual_source_hash = calculate_sha256(source_zip)
 
     if actual_source_hash != expected_source_hash.upper():
@@ -243,8 +280,8 @@ def project_month(
         )
 
     output_path = (
-        OUTPUT_DIR
-        / f"bts_2024_{month:02d}_core.csv.gz"
+        output_dir
+        / f"bts_{year}_{month:02d}_core.csv.gz"
     )
 
     temporary_path = Path(
@@ -366,7 +403,7 @@ def project_month(
         raise
 
     return {
-        "reporting_year": 2024,
+        "reporting_year": year,
         "reporting_month": month,
         "source_file": source_zip.name,
         "source_sha256": actual_source_hash,
@@ -398,11 +435,15 @@ def project_month(
 
 
 def main() -> None:
+    arguments = parse_arguments()
+    year = arguments.year
+    paths = build_paths(year)
+
     required_paths = [
-        RAW_DIR,
+        paths["raw_dir"],
         COLUMN_MANIFEST,
-        SOURCE_MANIFEST,
-        VALIDATION_SUMMARY,
+        paths["source_manifest"],
+        paths["validation_summary"],
     ]
 
     for path in required_paths:
@@ -411,30 +452,46 @@ def main() -> None:
                 f"Required path not found: {path}"
             )
 
-    OUTPUT_DIR.mkdir(
+    paths["output_dir"].mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    PROJECTION_MANIFEST.parent.mkdir(
+    paths["projection_manifest"].parent.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    PROJECTION_SUMMARY.parent.mkdir(
+    paths["projection_summary"].parent.mkdir(
         parents=True,
         exist_ok=True,
     )
 
     core_columns = load_core_columns()
-    source_manifest = load_source_manifest()
-    validation_results = load_validation_results()
+
+    source_manifest = load_source_manifest(
+        paths["source_manifest"]
+    )
+
+    validation_results = load_validation_results(
+        validation_summary_path=paths[
+            "validation_summary"
+        ],
+        year=year,
+    )
+
+    zip_pattern = (
+        "On_Time_Reporting_Carrier_"
+        "On_Time_Performance_1987_present_"
+        f"{year}_*.zip"
+    )
 
     zip_files = sorted(
-        RAW_DIR.glob(
-            "On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_*.zip"
+        paths["raw_dir"].glob(zip_pattern),
+        key=lambda file_path: extract_month(
+            file_path,
+            year,
         ),
-        key=extract_month,
     )
 
     if len(zip_files) != 12:
@@ -445,7 +502,10 @@ def main() -> None:
     projection_rows = []
 
     for source_zip in zip_files:
-        month = extract_month(source_zip)
+        month = extract_month(
+            source_zip,
+            year,
+        )
 
         expected_rows = int(
             validation_results[month]["row_count"]
@@ -456,13 +516,15 @@ def main() -> None:
         )
 
         print(
-            f"Projecting 2024-{month:02d} "
+            f"Projecting {year}-{month:02d} "
             f"({expected_rows:,} rows)...",
             flush=True,
         )
 
         result = project_month(
             source_zip=source_zip,
+            output_dir=paths["output_dir"],
+            year=year,
             month=month,
             core_columns=core_columns,
             expected_rows=expected_rows,
@@ -472,7 +534,7 @@ def main() -> None:
         projection_rows.append(result)
 
         print(
-            f"2024-{month:02d}: completed, "
+            f"{year}-{month:02d}: completed, "
             f"{result['output_size_mb']} MB",
             flush=True,
         )
@@ -494,7 +556,7 @@ def main() -> None:
         "output_sha256",
     ]
 
-    with PROJECTION_MANIFEST.open(
+    with paths["projection_manifest"].open(
         "w",
         encoding="utf-8",
         newline="",
@@ -526,7 +588,7 @@ def main() -> None:
         "generated_at_utc": datetime.now(
             timezone.utc
         ).isoformat(),
-        "year": 2024,
+        "year": year,
         "monthly_output_count": len(
             projection_rows
         ),
@@ -552,13 +614,13 @@ def main() -> None:
             2,
         ),
         "processed_manifest": str(
-            PROJECTION_MANIFEST.relative_to(
+            paths["projection_manifest"].relative_to(
                 PROJECT_ROOT
             )
         ),
     }
 
-    PROJECTION_SUMMARY.write_text(
+    paths["projection_summary"].write_text(
         json.dumps(
             summary,
             indent=2,
@@ -567,7 +629,7 @@ def main() -> None:
     )
 
     print()
-    print("2024 batch projection completed.")
+    print(f"{year} batch projection completed.")
     print(
         f"Monthly outputs: "
         f"{summary['monthly_output_count']}"
@@ -585,10 +647,10 @@ def main() -> None:
         f"{summary['total_output_size_mb']} MB"
     )
     print(
-        f"Manifest: {PROJECTION_MANIFEST}"
+        f"Manifest: {paths['projection_manifest']}"
     )
     print(
-        f"Summary: {PROJECTION_SUMMARY}"
+        f"Summary: {paths['projection_summary']}"
     )
 
 
