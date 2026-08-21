@@ -1,17 +1,43 @@
-﻿data/raw/
+﻿# Local and generated datasets
+data/raw/
 data/processed/
 data/load/
+
+# dbt generated artifacts
 dbt/target/
 dbt/logs/
 dbt/dbt_packages/
+
+# dbt local credentials
+profiles.yml
+dbt/profiles.yml
+
+# Python environments and caches
 .venv/
 venv/
 __pycache__/
 *.py[cod]
+
+# Environment variables
 .env
 .env.*
+
+# Google Cloud and service-account credentials
+*service-account*.json
+*service_account*.json
+google-credentials*.json
+google_credentials*.json
+application_default_credentials.json
+*.pem
+*.key
+
+# Editor settings
 .idea/
 .vscode/
+
+# Operating-system files
 .DS_Store
 Thumbs.db
+
+# Local logs
 logs/
