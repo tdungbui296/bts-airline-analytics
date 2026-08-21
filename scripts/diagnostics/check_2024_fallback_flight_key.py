@@ -4,7 +4,7 @@ from zipfile import ZipFile
 import pandas as pd
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = PROJECT_ROOT / "data" / "raw" / "2024"
 
 COLUMNS = [
