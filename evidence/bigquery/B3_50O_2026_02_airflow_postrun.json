@@ -1,0 +1,22 @@
+{
+    "checkpoint":  "B3.50O",
+    "status":  "PASS",
+    "verified_at_utc":  "2026-10-29T06:25:13.589717+00:00",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "location":  "asia-southeast1",
+    "raw_table":  "raw_bts.flights_2026",
+    "raw_rows":  1059040,
+    "incremental_table":  "dbt_dev.fact_flights_2026_monthly_incremental",
+    "incremental_rows":  1059040,
+    "schema_columns":  42,
+    "checks":  {
+                   "RAW_UNCHANGED":  true,
+                   "TARGET_ROW_COUNT":  true,
+                   "TARGET_PHYSICAL_TABLE":  true,
+                   "TARGET_SCHEMA_42_FIELDS":  true,
+                   "TARGET_PARTITIONED_BY_DATE":  true,
+                   "TARGET_CLUSTERING":  true
+               },
+    "query_jobs_submitted":  0,
+    "data_modified":  false
+}

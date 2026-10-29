@@ -1,0 +1,20 @@
+name: bts-airflow-demo
+
+services:
+  airflow:
+    image: bts-airflow:3.3.2-dbt1.12
+    command: standalone
+    restart: "no"
+    ports:
+      - "127.0.0.1:8088:8080"
+    environment:
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    volumes:
+      - bts_airflow_state:/opt/airflow
+      - ./dags:/opt/airflow/dags:ro
+      - ../evidence:/opt/bts/evidence:ro
+      - ../dbt:/opt/bts/dbt:ro
+
+volumes:
+  bts_airflow_state:
