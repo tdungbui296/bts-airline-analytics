@@ -14,3 +14,14 @@ sources:
         description: >
           Flight-level 2024-2025 reporting-carrier performance records
           loaded from twenty-four validated monthly BTS source files.
+          This table serves as the historical baseline.
+
+      - name: flights_2026
+        description: >
+          Separate cumulative landing table for validated 2026
+          Reporting Carrier On-Time Performance monthly batches.
+          Incoming months are loaded with the same 51-column schema
+          as the historical table. Each month must be reconciled
+          and checked against previously loaded periods to prevent
+          duplicate source ingestion.
+          January and February 2026 are the initial increment scope.

@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import argparse
 import csv
+from contextlib import contextmanager
 import gzip
 import hashlib
 import json
 import re
 import zipfile
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from io import TextIOWrapper
 from pathlib import Path
 
@@ -39,20 +40,31 @@ def parse_arguments() -> argparse.Namespace:
     """Parse the requested reporting year."""
     parser = argparse.ArgumentParser(
         description=(
-            "Project one validated annual batch of monthly BTS "
-            "On-Time Performance ZIP files."
+            "Project validated 2024-2025 annual BTS batches, or "
+            "a single 2026 reporting month."
         )
     )
 
     parser.add_argument(
         "--year",
         type=int,
-        choices=(2024, 2025),
+        choices=(2024, 2025, 2026),
         required=True,
         help="Reporting year to project.",
     )
-
-    return parser.parse_args()
+    parser.add_argument(
+        "--month",
+        type=int,
+        choices=range(1, 13),
+        metavar="1-12",
+        help="Required for 2026 single-month processing.",
+    )
+    args = parser.parse_args()
+    if args.year == 2026 and args.month is None:
+        parser.error("--month is required with --year 2026")
+    if args.year in (2024, 2025) and args.month is not None:
+        parser.error("--month is only supported with --year 2026")
+    return args
 
 
 def build_paths(year: int) -> dict[str, Path]:
@@ -159,6 +171,28 @@ def load_core_columns() -> list[str]:
     return columns
 
 
+def inspect_optional_unnamed_header(columns: list[str]) -> bool:
+    """Allow a single unnamed extra CSV column, never duplicate names.
+
+    BTS exports can include an empty header for an extra column. All
+    values in that unnamed column must be empty, checked row by row.
+    """
+    if len(columns) != len(set(columns)):
+        raise ValueError("Duplicate CSV header names")
+    unnamed = columns.count("")
+    if unnamed > 1:
+        raise ValueError("Multiple unnamed CSV columns")
+    return unnamed == 1
+
+
+def check_unnamed_value(row: dict, csv_row: int) -> None:
+    """Reject real data stored in an unnamed CSV column."""
+    if "" in row and row[""] not in (None, ""):
+        raise ValueError(
+            f"Nonempty value in unnamed CSV column at CSV row {csv_row}"
+        )
+
+
 def load_source_manifest(
     source_manifest_path: Path,
 ) -> dict[int, dict[str, str]]:
@@ -262,6 +296,25 @@ def load_validation_results(
     return results
 
 
+@contextmanager
+def deterministic_gzip_text(path: Path):
+    """Write gzip with a stable header (mtime=0, no file name)."""
+    with path.open("wb") as binary:
+        with gzip.GzipFile(
+            filename="",
+            fileobj=binary,
+            mode="wb",
+            compresslevel=6,
+            mtime=0,
+        ) as compressed:
+            with TextIOWrapper(
+                compressed,
+                encoding="utf-8",
+                newline="",
+            ) as text:
+                yield text
+
+
 def project_month(
     source_zip: Path,
     output_dir: Path,
@@ -270,6 +323,7 @@ def project_month(
     core_columns: list[str],
     expected_rows: int,
     expected_source_hash: str,
+    deterministic_output: bool = False,
 ) -> dict[str, object]:
     """Project one validated monthly ZIP into CSV.GZ."""
     actual_source_hash = calculate_sha256(source_zip)
@@ -337,6 +391,13 @@ def project_month(
                         for header in reader.fieldnames
                     ]
 
+                    if year == 2026:
+                        has_unnamed_projection = inspect_optional_unnamed_header(
+                            source_headers
+                        )
+                    else:
+                        has_unnamed_projection = False
+
                     missing_columns = [
                         column
                         for column in core_columns
@@ -349,13 +410,18 @@ def project_month(
                             f"{missing_columns}"
                         )
 
-                    with gzip.open(
-                        temporary_path,
-                        mode="wt",
-                        encoding="utf-8",
-                        newline="",
-                        compresslevel=6,
-                    ) as output_file:
+                    output_context = (
+                        deterministic_gzip_text(temporary_path)
+                        if deterministic_output
+                        else gzip.open(
+                            temporary_path,
+                            mode="wt",
+                            encoding="utf-8",
+                            newline="",
+                            compresslevel=6,
+                        )
+                    )
+                    with output_context as output_file:
                         writer = csv.DictWriter(
                             output_file,
                             fieldnames=output_columns,
@@ -374,6 +440,8 @@ def project_month(
                                     f"{source_zip.name}, CSV row "
                                     f"{source_row_number}."
                                 )
+                            if has_unnamed_projection:
+                                check_unnamed_value(row, source_row_number)
 
                             projected_row = {
                                 column: row.get(column, "")
@@ -434,9 +502,192 @@ def project_month(
     }
 
 
+def run_2026_month(month: int) -> None:
+    """Validate and project one approved 2026 source ZIP safely."""
+    year = 2026
+    paths = build_paths(year)
+    receipt_path = (
+        PROJECT_ROOT / "evidence" / "source"
+        / "2026_monthly_source_manifest.csv"
+    )
+    required_paths = [
+        paths["raw_dir"], COLUMN_MANIFEST, receipt_path
+    ]
+    for path in required_paths:
+        if not path.exists():
+            raise FileNotFoundError(f"Required path not found: {path}")
+
+    with receipt_path.open(
+        "r", encoding="utf-8-sig", newline=""
+    ) as file:
+        reader = csv.DictReader(file)
+        expected_fields = {
+            "reporting_year", "reporting_month", "source_file",
+            "source_sha256", "source_row_count",
+        }
+        if reader.fieldnames is None or set(reader.fieldnames) != expected_fields:
+            raise ValueError(
+                "2026 source manifest must contain precisely: "
+                + ", ".join(sorted(expected_fields))
+            )
+        receipts = list(reader)
+
+    matching = [
+        row for row in receipts
+        if row["reporting_year"] == "2026"
+        and row["reporting_month"] == str(month)
+    ]
+    if len(matching) != 1:
+        raise ValueError(
+            f"Expected exactly one source manifest entry for "
+            f"2026-{month:02d}; found {len(matching)}"
+        )
+    receipt = matching[0]
+    source_name = (
+        "On_Time_Reporting_Carrier_On_Time_Performance_"
+        f"1987_present_2026_{month}.zip"
+    )
+    if receipt["source_file"] != source_name:
+        raise ValueError("Source manifest ZIP filename mismatch")
+    source_zip = paths["raw_dir"] / source_name
+    if not source_zip.is_file():
+        raise FileNotFoundError(f"Missing source ZIP: {source_zip}")
+    expected_hash = receipt["source_sha256"].upper()
+    if not re.fullmatch(r"[A-F0-9]{64}", expected_hash):
+        raise ValueError("Invalid source SHA-256 in manifest")
+    if calculate_sha256(source_zip) != expected_hash:
+        raise ValueError("Source ZIP SHA-256 does not match manifest")
+    expected_rows = int(receipt["source_row_count"])
+    if expected_rows <= 0:
+        raise ValueError("Source manifest row count must be positive")
+
+    core_columns = load_core_columns()
+    with zipfile.ZipFile(source_zip, "r") as archive:
+        if archive.testzip() is not None:
+            raise ValueError("ZIP integrity check failed")
+        csv_members = [
+            member for member in archive.namelist()
+            if member.lower().endswith(".csv")
+            and not member.endswith("/")
+        ]
+        if len(csv_members) != 1:
+            raise ValueError("Expected one CSV member")
+        with archive.open(csv_members[0]) as binary:
+            with TextIOWrapper(
+                binary, encoding="utf-8-sig", newline=""
+            ) as text_file:
+                reader = csv.DictReader(text_file)
+                if reader.fieldnames is None:
+                    raise ValueError("Missing CSV header")
+                has_unnamed = inspect_optional_unnamed_header(
+                    reader.fieldnames
+                )
+                if has_unnamed:
+                    print(
+                        "Source contains one unnamed extra CSV column; "
+                        "verifying every value is empty."
+                    )
+                missing = sorted(set(core_columns) - set(reader.fieldnames))
+                if missing:
+                    raise ValueError(f"Missing required source columns: {missing}")
+                observed_rows = 0
+                for csv_row, row in enumerate(reader, start=2):
+                    if None in row:
+                        raise ValueError(
+                            f"Unexpected CSV values at row {csv_row}"
+                        )
+                    if has_unnamed:
+                        check_unnamed_value(row, csv_row)
+                    try:
+                        flight_day = date.fromisoformat(
+                            (row["FlightDate"] or "").strip()
+                        )
+                    except (ValueError, TypeError) as exc:
+                        raise ValueError(
+                            f"Invalid FlightDate at CSV row {csv_row}"
+                        ) from exc
+                    if (
+                        flight_day.year != year
+                        or flight_day.month != month
+                        or (row["Year"] or "").strip() != str(year)
+                        or (row["Month"] or "").strip() != str(month)
+                    ):
+                        raise ValueError(
+                            f"Wrong reporting period at CSV row {csv_row}"
+                        )
+                    observed_rows += 1
+
+    if observed_rows != expected_rows:
+        raise ValueError(
+            f"Source row mismatch: expected {expected_rows:,}, "
+            f"found {observed_rows:,}"
+        )
+
+    paths["output_dir"].mkdir(parents=True, exist_ok=True)
+    print(f"2026-{month:02d}: source checks PASS ({observed_rows:,} rows)")
+    result = project_month(
+        source_zip=source_zip,
+        output_dir=paths["output_dir"],
+        year=year,
+        month=month,
+        core_columns=core_columns,
+        expected_rows=expected_rows,
+        expected_source_hash=expected_hash,
+        deterministic_output=True,
+    )
+
+    # Each month writes separate receipts; other months are unaffected.
+    monthly_tag = f"2026_{month:02d}"
+    output_manifest = (
+        PROJECT_ROOT / "evidence" / "source"
+        / f"{monthly_tag}_processed_manifest.csv"
+    )
+    output_summary = (
+        PROJECT_ROOT / "analysis" / "profiling"
+        / f"{monthly_tag}_projection_summary.json"
+    )
+    output_manifest.parent.mkdir(parents=True, exist_ok=True)
+    output_summary.parent.mkdir(parents=True, exist_ok=True)
+    with output_manifest.open(
+        "w", encoding="utf-8", newline=""
+    ) as file:
+        writer = csv.DictWriter(file, fieldnames=list(result.keys()))
+        writer.writeheader()
+        writer.writerow(result)
+    summary = {
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "reporting_year": year,
+        "reporting_month": month,
+        "source_row_count": expected_rows,
+        "output_row_count": result["output_row_count"],
+        "row_count_reconciled": result["row_count_reconciled"],
+        "core_source_column_count": len(core_columns),
+        "technical_column_count": 1,
+        "output_column_count": result["output_column_count"],
+        "source_sha256": expected_hash,
+        "output_sha256": result["output_sha256"],
+        "processed_manifest": str(
+            output_manifest.relative_to(PROJECT_ROOT)
+        ),
+        "output_file": result["output_file"],
+    }
+    output_summary.write_text(
+        json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+    )
+    print(f"2026-{month:02d}: projection PASS")
+    print(f"Processed rows: {result['output_row_count']:,}")
+    print(f"Processed file: {result['output_file']}")
+    print(f"Processed SHA256: {result['output_sha256']}")
+    print(f"Manifest: {output_manifest}")
+    print(f"Summary: {output_summary}")
+
+
 def main() -> None:
     arguments = parse_arguments()
     year = arguments.year
+    if year == 2026:
+        run_2026_month(arguments.month)
+        return
     paths = build_paths(year)
 
     required_paths = [

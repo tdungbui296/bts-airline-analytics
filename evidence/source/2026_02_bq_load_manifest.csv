@@ -1,0 +1,2 @@
+reporting_year,reporting_month,input_file,input_sha256,expected_row_count,output_file,output_row_count,row_count_reconciled,output_column_count,output_size_bytes,output_size_mb,output_sha256
+2026,2,data\processed\2026\bts_2026_02_core.csv.gz,87A789D9E0F47CEB2D44639B2573A4ADC407148ED73FCDA57977264F776BE555,515037,data\load\2026\bts_2026_02_bq.csv.gz,515037,True,51,20465727,19.52,4DAA3CC9C55AE54739E878B41300E0BA2AE79B141A02DE339B312877F963AC7C

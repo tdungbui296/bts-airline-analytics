@@ -1,0 +1,25 @@
+{
+  "checkpoint": "B3.5",
+  "audit_type": "offline_jinja_branch_and_guard_checks",
+  "model_path": "dbt/models/incremental_demo/fact_flights_incremental_demo.sql",
+  "model_sha256": "A43BF19208C19FAAEAA90F9D1D25BCB1572917E224768BAB6D8D85D3508700AF",
+  "checks": [
+    "bootstrap_uses_historical_fact_only",
+    "2026-01_source_and_exact_month_filter",
+    "2026-02_source_and_exact_month_filter",
+    "missing_mode_rejected",
+    "monthly_without_target_rejected",
+    "repeat_bootstrap_rejected",
+    "bootstrap_with_month_rejected",
+    "bootstrap_full_refresh_rejected",
+    "monthly_full_refresh_rejected",
+    "bad_month_no_zero_pad_rejected",
+    "bad_month_not_2026_rejected",
+    "bad_month_13_rejected",
+    "numeric_month_rejected"
+  ],
+  "number_of_checks": 13,
+  "warehouse_connected": false,
+  "dbt_compilation_performed": false,
+  "merge_executed": false
+}

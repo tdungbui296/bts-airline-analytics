@@ -1,0 +1,15 @@
+{
+  "generated_at_utc": "2026-10-28T02:44:04.616074+00:00",
+  "reporting_year": 2026,
+  "reporting_month": 1,
+  "source_row_count": 544003,
+  "output_row_count": 544003,
+  "row_count_reconciled": true,
+  "core_source_column_count": 51,
+  "technical_column_count": 1,
+  "output_column_count": 52,
+  "source_sha256": "9FF58F560519DBC8FBD1B8B9FD2A172CA46D0A9E80F1DF4FD48891EFCA41E89C",
+  "output_sha256": "81952652B9CFDD7BF93D4FA74FFBA5FD0EC89DE7A02466F795FB26BBA4846C5A",
+  "processed_manifest": "evidence\\source\\2026_01_processed_manifest.csv",
+  "output_file": "data\\processed\\2026\\bts_2026_01_core.csv.gz"
+}

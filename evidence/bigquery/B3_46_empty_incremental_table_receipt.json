@@ -1,0 +1,28 @@
+{
+    "checkpoint":  "B3.46",
+    "recovery_checkpoint":  "B3.46R",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "model":  "fact_flights_2026_monthly_incremental",
+    "model_sha256":  "467CA59AA1BF15007BBD8F6B9D71665E2F562CA6EF435AE79CBDF55152EEC9C9",
+    "relation":  "dbt_dev.fact_flights_2026_monthly_incremental",
+    "dbt_invocation_id":  "7a8ae528-60e7-4c55-a408-9ec6878fd686",
+    "dbt_status":  "success",
+    "bootstrap_mode":  "zero_rows",
+    "verified_rows":  0,
+    "verified_logical_bytes":  0,
+    "fact_columns":  42,
+    "partition_field":  "flight_date",
+    "partition_type":  "DAY",
+    "clustering_fields":  [
+                              "origin_airport_id",
+                              "destination_airport_id",
+                              "reporting_airline_dot_id"
+                          ],
+    "historical_raw_rows":  14080680,
+    "raw_2026_rows":  1059040,
+    "total_bigquery_objects":  7,
+    "merge_executed":  false,
+    "dbt_run_results_file":  ".\\evidence\\bigquery\\B3_46_dbt_run_results.json",
+    "table_expiration_ms":  "1798382430524",
+    "verified_at_utc":  "2026-10-28T14:41:02.4475170Z"
+}

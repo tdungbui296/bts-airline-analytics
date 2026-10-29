@@ -1,0 +1,36 @@
+{
+    "checkpoint":  "B3.43",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "region":  "asia-southeast1",
+    "view":  "dbt_dev.fact_flights_2026",
+    "query_job_id":  "bts_2026_grain_4daa3cc9c55ae547",
+    "dry_run_estimated_bytes":  67700541,
+    "maximum_bytes_billed":  1000000000,
+    "actual_bytes_processed":  "67700541",
+    "actual_bytes_billed":  "68157440",
+    "grain":  "flight_key",
+    "results":  [
+                    {
+                        "distinct_flight_keys":  "544003",
+                        "flight_rows":  "544003",
+                        "null_flight_keys":  "0",
+                        "period":  "2026-01"
+                    },
+                    {
+                        "distinct_flight_keys":  "515037",
+                        "flight_rows":  "515037",
+                        "null_flight_keys":  "0",
+                        "period":  "2026-02"
+                    },
+                    {
+                        "distinct_flight_keys":  "1059040",
+                        "flight_rows":  "1059040",
+                        "null_flight_keys":  "0",
+                        "period":  "ALL_2026"
+                    }
+                ],
+    "duplicate_keys":  0,
+    "null_keys":  0,
+    "source_data_modified":  false,
+    "verified_at_utc":  "2026-10-28T09:28:03.5140159Z"
+}

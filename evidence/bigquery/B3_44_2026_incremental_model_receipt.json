@@ -1,0 +1,26 @@
+{
+    "checkpoint":  "B3.44",
+    "recovery_checkpoint":  "B3.44F",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "model_file":  ".\\dbt\\models\\incremental_demo\\fact_flights_2026_monthly_incremental.sql",
+    "model_sha256":  "467CA59AA1BF15007BBD8F6B9D71665E2F562CA6EF435AE79CBDF55152EEC9C9",
+    "original_model_sha256":  "A43BF19208C19FAAEAA90F9D1D25BCB1572917E224768BAB6D8D85D3508700AF",
+    "validated_modes":  [
+                            "bootstrap",
+                            "January",
+                            "February"
+                        ],
+    "supported_months":  [
+                             "2026-01",
+                             "2026-02"
+                         ],
+    "strategy":  "merge",
+    "unique_key":  "flight_key",
+    "partition_field":  "flight_date",
+    "destination_predicates_verified":  true,
+    "source_rows_verified":  1059040,
+    "validation_only":  true,
+    "cloud_tables_created":  0,
+    "merge_operations_executed":  0,
+    "verified_at_utc":  "2026-10-28T09:54:20.1095866Z"
+}

@@ -1,0 +1,18 @@
+{
+    "checkpoint":  "B3.45",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "region":  "asia-southeast1",
+    "source_model":  ".\\dbt\\models\\incremental_demo\\fact_flights_2026_monthly_incremental.sql",
+    "source_model_sha256":  "467CA59AA1BF15007BBD8F6B9D71665E2F562CA6EF435AE79CBDF55152EEC9C9",
+    "compiled_sql_file":  ".\\evidence\\bigquery\\B3_45_2026_bootstrap_compiled.sql",
+    "compiled_sql_sha256":  "43D698E1DFB6EC489654C79609A0B88036261900B870550177F16A012506347C",
+    "bootstrap_mode":  "zero_rows",
+    "source_relation":  "dbt_dev.fact_flights_2026",
+    "target_relation":  "dbt_dev.fact_flights_2026_monthly_incremental",
+    "dry_run_estimated_bytes":  0,
+    "maximum_bytes_billed":  1000000000,
+    "dry_run_validated":  true,
+    "target_created":  false,
+    "merge_executed":  false,
+    "verified_at_utc":  "2026-10-28T10:01:11.8690634Z"
+}

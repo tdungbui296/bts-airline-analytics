@@ -1,0 +1,22 @@
+{
+    "checkpoint":  "B3.47A",
+    "recovery_checkpoint":  "B3.47AR",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "region":  "asia-southeast1",
+    "month":  "2026-01",
+    "model_sha256":  "467CA59AA1BF15007BBD8F6B9D71665E2F562CA6EF435AE79CBDF55152EEC9C9",
+    "expected_source_rows":  544003,
+    "target_preflight_rows":  0,
+    "target_fact_columns":  42,
+    "compiled_source_file":  ".\\evidence\\bigquery\\B3_47_january_compiled_source.sql",
+    "compiled_source_sha256":  "A76463C61E125E36A3BFE58343041E1084B44C4728745D801631FFB1D6426094",
+    "representative_merge_file":  ".\\evidence\\bigquery\\B3_47_january_representative_merge.sql",
+    "representative_merge_sha256":  "772D880BB7229936F157A87158D756392BE91030C6D1BEA8BABBF3E011E19485",
+    "merge_estimated_bytes":  216475597,
+    "estimate_kind":  "UPPER_BOUND",
+    "maximum_bytes_billed":  1000000000,
+    "estimate_scope":  "Representative direct MERGE only; excludes dbt materialization overhead",
+    "dry_run_validated":  true,
+    "actual_merge_executed":  false,
+    "verified_at_utc":  "2026-10-28T16:09:57.6095307Z"
+}

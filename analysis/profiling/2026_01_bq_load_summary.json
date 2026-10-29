@@ -1,0 +1,15 @@
+{
+  "reporting_year": 2026,
+  "reporting_month": 1,
+  "input_file": "data\\processed\\2026\\bts_2026_01_core.csv.gz",
+  "input_sha256": "81952652B9CFDD7BF93D4FA74FFBA5FD0EC89DE7A02466F795FB26BBA4846C5A",
+  "source_zip_sha256": "9FF58F560519DBC8FBD1B8B9FD2A172CA46D0A9E80F1DF4FD48891EFCA41E89C",
+  "expected_row_count": 544003,
+  "output_file": "data\\load\\2026\\bts_2026_01_bq.csv.gz",
+  "output_row_count": 544003,
+  "output_column_count": 51,
+  "output_sha256": "41236900C1E7311045C4B020CC7E67E35EDE4143E4B48325CB1201C725F33849",
+  "output_size_bytes": 21580299,
+  "row_count_reconciled": true,
+  "deterministic_gzip": true
+}

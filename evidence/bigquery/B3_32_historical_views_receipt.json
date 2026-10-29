@@ -1,0 +1,20 @@
+{
+    "checkpoint":  "B3.32",
+    "recovery_checkpoint":  "B3.32C",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "region":  "asia-southeast1",
+    "historical_raw_rows":  14080680,
+    "historical_raw_logical_bytes":  5192177406,
+    "model_count":  3,
+    "models":  [
+                   "stg_bts__flights",
+                   "int_flights__quality_classified",
+                   "fact_flights"
+               ],
+    "materialization":  "view",
+    "dataset":  "dbt_dev",
+    "dbt_status":  "success",
+    "dbt_invocation_id":  "dc37c0c7-bdb0-4880-a4d5-850920b8c7cd",
+    "physical_fact_bootstrapped":  false,
+    "verified_at_utc":  "2026-10-28T08:05:25.5393604Z"
+}

@@ -1,0 +1,27 @@
+{
+    "checkpoint":  "B3.42",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "region":  "asia-southeast1",
+    "model_sha256":  "A43BF19208C19FAAEAA90F9D1D25BCB1572917E224768BAB6D8D85D3508700AF",
+    "fact_schema_columns":  42,
+    "schemas_compatible":  true,
+    "query_guard_bytes":  1000000000,
+    "estimates":  [
+                      {
+                          "month":  "2026-01",
+                          "estimated_bytes":  216475597,
+                          "estimated_gib":  0.2016,
+                          "within_1gb_guard":  true
+                      },
+                      {
+                          "month":  "2026-02",
+                          "estimated_bytes":  216475597,
+                          "estimated_gib":  0.2016,
+                          "within_1gb_guard":  true
+                      }
+                  ],
+    "dry_run_only":  true,
+    "incremental_table_created":  false,
+    "merge_executed":  false,
+    "verified_at_utc":  "2026-10-28T09:20:07.1353205Z"
+}

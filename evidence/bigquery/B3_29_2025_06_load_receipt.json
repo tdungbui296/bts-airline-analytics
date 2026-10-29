@@ -1,0 +1,16 @@
+{
+    "checkpoint":  "B3.29",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "region":  "asia-southeast1",
+    "month":  "2025-06",
+    "destination":  "raw_bts.flights",
+    "source_sha256":  "94DC4AF71A41F272A5ACE756D2829C863FD3120A160707151ACBEF55B37C0E8E",
+    "job_id":  "bts_2025_06_94dc4af71a41f272",
+    "job_status":  "DONE",
+    "imported_rows":  611575,
+    "input_files":  1,
+    "bad_records":  0,
+    "verified_total_rows":  10525737,
+    "reported_logical_bytes":  3879960059,
+    "verified_at_utc":  "2026-10-28T07:38:55.3155115Z"
+}

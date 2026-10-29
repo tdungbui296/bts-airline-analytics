@@ -1,0 +1,21 @@
+{
+    "checkpoint":  "B3.41",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "region":  "asia-southeast1",
+    "dbt_invocation_id":  "26c198a8-9403-4aad-b644-b1d3689de0f6",
+    "new_models":  [
+                       "stg_bts__flights_2026",
+                       "int_flights__quality_classified_2026",
+                       "fact_flights_2026"
+                   ],
+    "model_count":  3,
+    "materialization":  "view",
+    "dbt_status":  "success",
+    "historical_raw_rows":  14080680,
+    "raw_2026_rows":  1059040,
+    "total_bigquery_views":  6,
+    "incremental_table_created":  false,
+    "merge_executed":  false,
+    "run_results_file":  ".\\evidence\\bigquery\\B3_41_2026_views_run_results.json",
+    "verified_at_utc":  "2026-10-28T09:05:03.6944931Z"
+}

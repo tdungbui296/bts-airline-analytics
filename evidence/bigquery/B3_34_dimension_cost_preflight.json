@@ -1,0 +1,30 @@
+{
+    "checkpoint":  "B3.34C",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "region":  "asia-southeast1",
+    "protected_query_limit_bytes":  1000000000,
+    "dry_run_only":  true,
+    "dimensions_created":  false,
+    "estimates":  [
+                      {
+                          "model":  "dim_airport",
+                          "estimated_bytes":  1128997681,
+                          "estimated_gib":  1.0515,
+                          "within_1gb_guard":  false
+                      },
+                      {
+                          "model":  "dim_carrier",
+                          "estimated_bytes":  168968160,
+                          "estimated_gib":  0.1574,
+                          "within_1gb_guard":  true
+                      },
+                      {
+                          "model":  "dim_date",
+                          "estimated_bytes":  112645440,
+                          "estimated_gib":  0.1049,
+                          "within_1gb_guard":  true
+                      }
+                  ],
+    "models_exceeding_guard":  1,
+    "checked_at_utc":  "2026-10-28T08:23:13.0345672Z"
+}
