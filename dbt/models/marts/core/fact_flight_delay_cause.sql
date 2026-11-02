@@ -1,5 +1,5 @@
 {{ config(
-    materialized='table',
+    materialized=var('historical_delay_cause_materialization', 'table'),
     cluster_by=[
         "origin_airport_id",
         "destination_airport_id",

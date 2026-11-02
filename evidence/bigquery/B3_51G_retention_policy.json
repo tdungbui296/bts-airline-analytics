@@ -1,0 +1,82 @@
+{
+  "checkpoint": "B3.51G-R2",
+  "status": "PASS",
+  "verified_at_utc": "2026-10-29T07:17:43.642691+00:00",
+  "project": "tdb-dbt-bigquery-portfolio",
+  "region": "asia-southeast1",
+  "minimum_retention_days": 180,
+  "datasets": {
+    "raw_bts": {
+      "previous_table_default_ms": 5184000000,
+      "previous_partition_default_ms": 5184000000,
+      "verified_table_default_ms": 15552000000,
+      "verified_partition_default_ms": null
+    },
+    "dbt_dev": {
+      "previous_table_default_ms": 5184000000,
+      "previous_partition_default_ms": null,
+      "verified_table_default_ms": 15552000000,
+      "verified_partition_default_ms": null
+    }
+  },
+  "objects": {
+    "raw_bts.flights": {
+      "previous_expiration": "2026-12-27T06:32:28.773000+00:00",
+      "verified_expiration": "2027-04-27T07:17:34.127000+00:00",
+      "expiration_extended": true,
+      "partition_expiration_ms": null
+    },
+    "raw_bts.flights_2026": {
+      "previous_expiration": "2026-12-27T08:46:26.454000+00:00",
+      "verified_expiration": "2027-04-27T07:17:34.127000+00:00",
+      "expiration_extended": true,
+      "partition_expiration_ms": null
+    },
+    "dbt_dev.stg_bts__flights": {
+      "previous_expiration": "2026-12-27T07:57:19.657000+00:00",
+      "verified_expiration": "2027-04-27T07:17:34.127000+00:00",
+      "expiration_extended": true,
+      "partition_expiration_ms": null
+    },
+    "dbt_dev.int_flights__quality_classified": {
+      "previous_expiration": "2026-12-27T07:57:27.069000+00:00",
+      "verified_expiration": "2027-04-27T07:17:34.127000+00:00",
+      "expiration_extended": true,
+      "partition_expiration_ms": null
+    },
+    "dbt_dev.fact_flights": {
+      "previous_expiration": "2026-12-27T07:57:29.591000+00:00",
+      "verified_expiration": "2027-04-27T07:17:34.127000+00:00",
+      "expiration_extended": true,
+      "partition_expiration_ms": null
+    },
+    "dbt_dev.stg_bts__flights_2026": {
+      "previous_expiration": "2026-12-28T06:19:21.842000+00:00",
+      "verified_expiration": "2027-04-27T07:17:34.127000+00:00",
+      "expiration_extended": true,
+      "partition_expiration_ms": null
+    },
+    "dbt_dev.int_flights__quality_classified_2026": {
+      "previous_expiration": "2026-12-28T06:19:23.582000+00:00",
+      "verified_expiration": "2027-04-27T07:17:34.127000+00:00",
+      "expiration_extended": true,
+      "partition_expiration_ms": null
+    },
+    "dbt_dev.fact_flights_2026": {
+      "previous_expiration": "2026-12-28T06:19:26.128000+00:00",
+      "verified_expiration": "2027-04-27T07:17:34.127000+00:00",
+      "expiration_extended": true,
+      "partition_expiration_ms": null
+    },
+    "dbt_dev.fact_flights_2026_monthly_incremental": {
+      "previous_expiration": "2026-12-27T14:40:30.524000+00:00",
+      "verified_expiration": "2027-04-27T07:17:34.127000+00:00",
+      "expiration_extended": true,
+      "partition_expiration_ms": null
+    }
+  },
+  "object_count": 9,
+  "sql_query_jobs_submitted": 0,
+  "flight_data_modified": false,
+  "airflow_executed": false
+}

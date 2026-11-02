@@ -1,0 +1,41 @@
+{
+    "checkpoint":  "B3.51AN",
+    "recorded_at_utc":  "2026-11-02T06:51:31.851136+00:00",
+    "airflow":  {
+                    "dag_id":  "bts_unified_reporting_publish_once",
+                    "run_id":  "manual__bts_unified_reporting_once_20261102",
+                    "run_state":  "success",
+                    "task_states":  {
+                                        "authorize_publication":  "success",
+                                        "validate_dependencies":  "success",
+                                        "validate_dbt_selection":  "success",
+                                        "publish_unified_views":  "success",
+                                        "verify_publication":  "success"
+                                    },
+                    "successful_tasks":  5,
+                    "original_reporting_dag_sha256":  "07891b675b15216e3748c18cbe2600be2c429d9ef1e904a10e90fbd0341c0ac2",
+                    "unified_reporting_dag_sha256":  "15ab8777dbaa8f5148c67cdb222411185124592957e2690de0a725ecf8f4691f"
+                },
+    "bigquery_prior_verification":  {
+                                        "source_checkpoint":  "B3.51AM",
+                                        "project":  "tdb-dbt-bigquery-portfolio",
+                                        "dataset":  "dbt_dev",
+                                        "view_column_counts":  {
+                                                                   "dim_date_reporting":  12,
+                                                                   "mart_airport_monthly_performance_reporting":  30,
+                                                                   "mart_carrier_monthly_performance_reporting":  41,
+                                                                   "mart_route_monthly_performance_reporting":  40,
+                                                                   "mart_carrier_monthly_delay_cause_reporting":  9
+                                                               },
+                                        "valid_views":  5,
+                                        "logical_storage_gib":  5.48909,
+                                        "incremental_2026_rows":  1059040,
+                                        "note":  "BigQuery values from B3.51AM; not requeried here"
+                                    },
+    "operations_this_checkpoint":  {
+                                       "bigquery_api_calls":  0,
+                                       "bigquery_sql_jobs":  0,
+                                       "dbt_runs":  0,
+                                       "airflow_triggers":  0
+                                   }
+}

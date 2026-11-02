@@ -1,0 +1,63 @@
+{
+  "checkpoint": "B3.51H-R",
+  "status": "ESTIMATES_COLLECTED",
+  "verified_at_utc": "2026-10-29T07:24:20.669231+00:00",
+  "project": "tdb-dbt-bigquery-portfolio",
+  "dataset": "dbt_dev",
+  "seed": {
+    "name": "dim_delay_cause",
+    "source_path": "seeds\\dim_delay_cause.csv",
+    "relation": "tdb-dbt-bigquery-portfolio.dbt_dev.dim_delay_cause",
+    "matches_expected_dimension": true,
+    "exists_in_bigquery": false
+  },
+  "estimates": {
+    "dim_airport": {
+      "estimated_bytes": 1128997681,
+      "estimated_gb": 1.129,
+      "within_1gb_cap": false
+    },
+    "dim_carrier": {
+      "estimated_bytes": 168968160,
+      "estimated_gb": 0.169,
+      "within_1gb_cap": true
+    },
+    "dim_date": {
+      "estimated_bytes": 112645440,
+      "estimated_gb": 0.1126,
+      "within_1gb_cap": true
+    },
+    "fact_flight_delay_cause": {
+      "estimated_bytes": 1243405176,
+      "estimated_gb": 1.2434,
+      "within_1gb_cap": false
+    },
+    "mart_airport_monthly_performance": {
+      "estimated_bytes": 1454347488,
+      "estimated_gb": 1.4543,
+      "within_1gb_cap": false
+    },
+    "mart_carrier_monthly_performance": {
+      "estimated_bytes": 2345386424,
+      "estimated_gb": 2.3454,
+      "within_1gb_cap": false
+    },
+    "mart_route_monthly_performance": {
+      "estimated_bytes": 2345386424,
+      "estimated_gb": 2.3454,
+      "within_1gb_cap": false
+    }
+  },
+  "deferred_model": "mart_carrier_monthly_delay_cause",
+  "total_estimated_bytes": 8799136793,
+  "models_over_1gb": [
+    "dim_airport",
+    "fact_flight_delay_cause",
+    "mart_airport_monthly_performance",
+    "mart_carrier_monthly_performance",
+    "mart_route_monthly_performance"
+  ],
+  "dry_runs_completed": 7,
+  "historical_tables_rebuilt": 0,
+  "february_merge_rerun": false
+}

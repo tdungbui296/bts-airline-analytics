@@ -1,0 +1,53 @@
+{
+  "checkpoint": "B3.51T",
+  "status": "PASS",
+  "verified_at_utc": "2026-10-29T08:45:40.380887+00:00",
+  "project": "tdb-dbt-bigquery-portfolio",
+  "months": {
+    "2026-01-01": {
+      "scheduled_flights": 544003,
+      "cancelled_flights": 25635,
+      "arrival_delayed_15_flights": 107475,
+      "arrival_observed_flights": 517222,
+      "arrival_delay_minutes": "8606850.0",
+      "departure_delay_minutes": "8692810.0",
+      "positive_delay_cause_entries": 170680,
+      "attributed_delay_cause_minutes": "8127392"
+    },
+    "2026-02-01": {
+      "scheduled_flights": 515037,
+      "cancelled_flights": 11605,
+      "arrival_delayed_15_flights": 99251,
+      "arrival_observed_flights": 502396,
+      "arrival_delay_minutes": "7360228.0",
+      "departure_delay_minutes": "7589207.0",
+      "positive_delay_cause_entries": 157774,
+      "attributed_delay_cause_minutes": "6876004"
+    }
+  },
+  "jobs": {
+    "flight_metrics": {
+      "job_id": "c498b134-2535-430f-abdb-59aeb96d0952",
+      "estimated_bytes": 53363034,
+      "actual_bytes_processed": 53363034,
+      "total_bytes_billed": 53477376,
+      "result_rows": 10,
+      "sql_sha256": "a4e6a29fe8190c7ae28e6e439f0a86771f0281af6806ee6d83abd16dcaeb2620"
+    },
+    "delay_causes": {
+      "job_id": "611aff5a-f64f-4a39-9028-df620f8e2a5b",
+      "estimated_bytes": 26272720,
+      "actual_bytes_processed": 26272720,
+      "total_bytes_billed": 27262976,
+      "result_rows": 6,
+      "sql_sha256": "2359bef73eb1f0f761d1696e934a2eb7aeed0588427e32057e9fb6c49a1f4025"
+    }
+  },
+  "combined_dry_run_estimated_bytes": 79635754,
+  "maximum_bytes_billed_per_query": 1000000000,
+  "independent_source_fact_reconciliation": true,
+  "historical_tables_rebuilt": false,
+  "february_merge_rerun": false,
+  "dbt_models_rerun": false,
+  "airflow_dag_retriggered": false
+}

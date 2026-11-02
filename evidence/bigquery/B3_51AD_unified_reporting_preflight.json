@@ -1,0 +1,39 @@
+{
+  "checkpoint": "B3.51AD",
+  "status": "PASS",
+  "verified_at_utc": "2026-10-29T09:43:42.721659+00:00",
+  "mart_schema_pairs": {
+    "mart_airport_monthly_performance": {
+      "historical_rows": 8112,
+      "columns": 30,
+      "schemas_match": true
+    },
+    "mart_carrier_monthly_performance": {
+      "historical_rows": 348,
+      "columns": 41,
+      "schemas_match": true
+    },
+    "mart_route_monthly_performance": {
+      "historical_rows": 139287,
+      "columns": 40,
+      "schemas_match": true
+    },
+    "mart_carrier_monthly_delay_cause": {
+      "historical_rows": 1706,
+      "columns": 9,
+      "schemas_match": true
+    }
+  },
+  "unified_reporting_targets": [
+    "dim_date_reporting",
+    "mart_airport_monthly_performance_reporting",
+    "mart_carrier_monthly_delay_cause_reporting",
+    "mart_carrier_monthly_performance_reporting",
+    "mart_route_monthly_performance_reporting"
+  ],
+  "logical_storage_gib": 5.48909,
+  "bigquery_sql_queries_executed": false,
+  "dbt_models_executed": false,
+  "airflow_triggered": false,
+  "incremental_merge_rerun": false
+}

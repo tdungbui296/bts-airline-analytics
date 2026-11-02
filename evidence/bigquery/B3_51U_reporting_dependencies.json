@@ -1,0 +1,173 @@
+{
+  "checkpoint": "B3.51U",
+  "status": "AUDIT_COMPLETE",
+  "timestamp_utc": "2026-10-29T08:48:10.485945+00:00",
+  "reporting_models": {
+    "dim_date_reporting": {
+      "materialization": "view",
+      "direct_parents": [
+        "dim_date"
+      ]
+    },
+    "mart_airport_monthly_performance_reporting": {
+      "materialization": "view",
+      "direct_parents": [
+        "mart_airport_monthly_performance",
+        "mart_airport_monthly_performance_2026"
+      ]
+    },
+    "mart_carrier_monthly_performance_reporting": {
+      "materialization": "view",
+      "direct_parents": [
+        "mart_carrier_monthly_performance",
+        "mart_carrier_monthly_performance_2026"
+      ]
+    },
+    "mart_route_monthly_performance_reporting": {
+      "materialization": "view",
+      "direct_parents": [
+        "mart_route_monthly_performance",
+        "mart_route_monthly_performance_2026"
+      ]
+    },
+    "mart_carrier_monthly_delay_cause_reporting": {
+      "materialization": "view",
+      "direct_parents": [
+        "mart_carrier_monthly_delay_cause",
+        "mart_carrier_monthly_delay_cause_2026"
+      ]
+    }
+  },
+  "dependency_inventory": {
+    "dim_date": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "table"
+    },
+    "dim_date_reporting": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "view"
+    },
+    "fact_flight_delay_cause": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "view"
+    },
+    "fact_flight_delay_cause_2026": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "fact_flights": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "fact_flights_2026": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "fact_flights_2026_monthly_incremental": {
+      "exists": true,
+      "cloud_type": "TABLE",
+      "dbt_materialization": "incremental"
+    },
+    "int_flights__quality_classified": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "int_flights__quality_classified_2026": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "mart_airport_monthly_performance": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "table"
+    },
+    "mart_airport_monthly_performance_2026": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "mart_airport_monthly_performance_reporting": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "view"
+    },
+    "mart_carrier_monthly_delay_cause": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "table"
+    },
+    "mart_carrier_monthly_delay_cause_2026": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "mart_carrier_monthly_delay_cause_reporting": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "view"
+    },
+    "mart_carrier_monthly_performance": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "table"
+    },
+    "mart_carrier_monthly_performance_2026": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "mart_carrier_monthly_performance_reporting": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "view"
+    },
+    "mart_route_monthly_performance": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "table"
+    },
+    "mart_route_monthly_performance_2026": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "mart_route_monthly_performance_reporting": {
+      "exists": false,
+      "cloud_type": null,
+      "dbt_materialization": "view"
+    },
+    "stg_bts__flights": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    },
+    "stg_bts__flights_2026": {
+      "exists": true,
+      "cloud_type": "VIEW",
+      "dbt_materialization": "view"
+    }
+  },
+  "missing_required_historical": [
+    "dim_date",
+    "fact_flight_delay_cause",
+    "mart_airport_monthly_performance",
+    "mart_carrier_monthly_delay_cause",
+    "mart_carrier_monthly_performance",
+    "mart_route_monthly_performance"
+  ],
+  "other_missing_dependencies": [],
+  "historical_delay_cause_recovery_mode": "view",
+  "incremental_fact_rows": 1059040,
+  "sql_query_jobs_executed": false,
+  "dbt_models_executed": false,
+  "airflow_triggered": false,
+  "bigquery_objects_modified": false
+}

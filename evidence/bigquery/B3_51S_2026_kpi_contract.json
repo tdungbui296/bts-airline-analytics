@@ -1,0 +1,901 @@
+{
+  "checkpoint": "B3.51S",
+  "status": "PASS",
+  "verified_at_utc": "2026-10-29T08:41:54.737154+00:00",
+  "project": "tdb-dbt-bigquery-portfolio",
+  "dataset": "dbt_dev",
+  "contracts": {
+    "fact_flights_2026_monthly_incremental": {
+      "table_type": "TABLE",
+      "column_count": 42,
+      "columns": [
+        {
+          "name": "flight_key",
+          "type": "STRING",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "flight_date",
+          "type": "DATE",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "reporting_airline_dot_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "origin_airport_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "destination_airport_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "flight_number",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "tail_number",
+          "type": "STRING",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "uses_fallback_flight_key",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "scheduled_departure_hhmm",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "actual_departure_hhmm",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_delay_minutes_signed",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "is_departure_delayed_15_minutes",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "taxi_out_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "wheels_off_hhmm",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "wheels_on_hhmm",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "taxi_in_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "scheduled_arrival_hhmm",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "actual_arrival_hhmm",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_delay_minutes_signed",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "is_arrival_delayed_15_minutes",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "is_cancelled",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "operational_cancelled_flag",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "cancellation_code",
+          "type": "STRING",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "is_diverted",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "valid_diversion_landing_count",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "is_cancelled_air_return",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "valid_scheduled_elapsed_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "actual_elapsed_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "air_time_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "distance_miles",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "carrier_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "weather_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "national_airspace_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "security_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "late_aircraft_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "has_negative_scheduled_elapsed_time",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "is_eligible_for_scheduled_duration_metrics",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "has_missing_delay_cause_breakdown",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "has_zero_delay_cause_breakdown",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "has_unclassified_incomplete_arrival",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "is_eligible_for_actual_duration_metrics",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "is_eligible_for_delay_cause_metrics",
+          "type": "BOOLEAN",
+          "mode": "NULLABLE"
+        }
+      ]
+    },
+    "fact_flight_delay_cause_2026": {
+      "table_type": "VIEW",
+      "column_count": 7,
+      "columns": [
+        {
+          "name": "flight_key",
+          "type": "STRING",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "flight_date",
+          "type": "DATE",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "reporting_airline_dot_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "origin_airport_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "destination_airport_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "delay_cause_key",
+          "type": "STRING",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        }
+      ],
+      "view_sql_sha256": "3df3b7b86495687c5acf543b622194d37d566be4ff7a6003eadf62ff9801f1aa"
+    },
+    "mart_airport_monthly_performance_2026": {
+      "table_type": "VIEW",
+      "column_count": 30,
+      "columns": [
+        {
+          "name": "flight_month",
+          "type": "DATE",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "airport_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "scheduled_departures",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "operated_departures",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "cancelled_departures",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_delayed_15_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departing_carrier_count",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "destination_count",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_cancellation_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_delay_15_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_departure_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_departure_delay_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "taxi_out_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_taxi_out_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_taxi_out_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "scheduled_arrivals",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "diverted_inbound_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_delayed_15_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arriving_carrier_count",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "origin_count",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "inbound_diversion_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_delay_15_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "on_time_arrival_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_arrival_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_arrival_delay_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "taxi_in_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_taxi_in_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_taxi_in_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        }
+      ],
+      "view_sql_sha256": "ab07796b4f739acba50c2e5ec699f0d80a92f11e831411cf044cadf1eda21315"
+    },
+    "mart_carrier_monthly_performance_2026": {
+      "table_type": "VIEW",
+      "column_count": 41,
+      "columns": [
+        {
+          "name": "flight_month",
+          "type": "DATE",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "reporting_airline_dot_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "scheduled_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "operated_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "cancelled_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "diverted_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_delayed_15_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_delayed_15_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "active_service_days",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "origin_airport_count",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "destination_airport_count",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "route_count",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "cancellation_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "diversion_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_delay_15_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_delay_15_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "on_time_arrival_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_departure_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_arrival_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_departure_delay_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_arrival_delay_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "scheduled_duration_eligible_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_scheduled_elapsed_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_scheduled_elapsed_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "actual_duration_eligible_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_actual_elapsed_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_actual_elapsed_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "air_time_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_air_time_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_air_time_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "taxi_out_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_taxi_out_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_taxi_out_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "taxi_in_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_taxi_in_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_taxi_in_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "distance_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_distance_miles",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_distance_miles",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        }
+      ],
+      "view_sql_sha256": "77516b5686ac7449f4990ba6f18eabcf1f8880c26a48c3e08757834a9531c15e"
+    },
+    "mart_route_monthly_performance_2026": {
+      "table_type": "VIEW",
+      "column_count": 40,
+      "columns": [
+        {
+          "name": "flight_month",
+          "type": "DATE",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "origin_airport_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "destination_airport_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "scheduled_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "operated_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "cancelled_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "diverted_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_delayed_15_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_delayed_15_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "active_service_days",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "reporting_carrier_count",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "cancellation_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "diversion_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "departure_delay_15_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "arrival_delay_15_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "on_time_arrival_rate",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_departure_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_arrival_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_departure_delay_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_arrival_delay_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "scheduled_duration_eligible_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_scheduled_elapsed_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_scheduled_elapsed_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "actual_duration_eligible_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_actual_elapsed_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_actual_elapsed_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "air_time_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_air_time_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_air_time_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "taxi_out_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_taxi_out_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_taxi_out_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "taxi_in_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_taxi_in_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_taxi_in_minutes",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "distance_observed_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_distance_miles",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_distance_miles",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        }
+      ],
+      "view_sql_sha256": "60fac5e97c397bdc1fd7d0d5456c4dfaad0a3b4b3e698385cb72a05f3c5801dc"
+    },
+    "mart_carrier_monthly_delay_cause_2026": {
+      "table_type": "VIEW",
+      "column_count": 9,
+      "columns": [
+        {
+          "name": "flight_month",
+          "type": "DATE",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "reporting_airline_dot_id",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "delay_cause_key",
+          "type": "STRING",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "affected_flights",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "total_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "avg_delay_minutes_per_affected_flight",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "max_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "carrier_total_attributed_delay_minutes",
+          "type": "INTEGER",
+          "mode": "NULLABLE"
+        },
+        {
+          "name": "cause_delay_minute_share_within_carrier_month",
+          "type": "FLOAT",
+          "mode": "NULLABLE"
+        }
+      ],
+      "view_sql_sha256": "00f6b7f684cabd68f7f160c811b4e5e1fd0b31baa7ccc08b1ae652f41e19bcce"
+    }
+  },
+  "incremental_fact_rows": 1059040,
+  "partition_field": "flight_date",
+  "live_data_queries_executed": false,
+  "dbt_models_executed": false,
+  "airflow_dag_triggered": false,
+  "kpi_reconciliation_completed": false
+}

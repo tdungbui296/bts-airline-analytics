@@ -1,0 +1,84 @@
+{
+  "checkpoint": "B3.51R",
+  "status": "PASS",
+  "verified_at_utc": "2026-10-29T08:39:28.831463+00:00",
+  "project": "tdb-dbt-bigquery-portfolio",
+  "dataset": "dbt_dev",
+  "views": {
+    "fact_flights_reporting": {
+      "type": "VIEW",
+      "columns": 42,
+      "expires": "2027-04-27T08:36:46.638000+00:00"
+    },
+    "fact_flight_delay_cause_2026": {
+      "type": "VIEW",
+      "columns": 7,
+      "expires": "2027-04-27T08:36:46.023000+00:00"
+    },
+    "mart_airport_monthly_performance_2026": {
+      "type": "VIEW",
+      "columns": 30,
+      "expires": "2027-04-27T08:36:45.955000+00:00"
+    },
+    "mart_carrier_monthly_performance_2026": {
+      "type": "VIEW",
+      "columns": 41,
+      "expires": "2027-04-27T08:36:46.143000+00:00"
+    },
+    "mart_route_monthly_performance_2026": {
+      "type": "VIEW",
+      "columns": 40,
+      "expires": "2027-04-27T08:36:47.253000+00:00"
+    },
+    "mart_carrier_monthly_delay_cause_2026": {
+      "type": "VIEW",
+      "columns": 9,
+      "expires": "2027-04-27T08:36:47.342000+00:00"
+    }
+  },
+  "physical_baselines": {
+    "raw_bts.flights": {
+      "rows": 14080680,
+      "logical_bytes": 5192177406
+    },
+    "raw_bts.flights_2026": {
+      "rows": 1059040,
+      "logical_bytes": 387025637
+    },
+    "dbt_dev.fact_flights_2026_monthly_incremental": {
+      "rows": 1059040,
+      "logical_bytes": 267840452
+    }
+  },
+  "total_logical_storage_gib": 5.44548,
+  "dry_runs": {
+    "fact_flights_reporting": {
+      "estimated_bytes_processed": 3183244577,
+      "estimated_gib": 2.96463
+    },
+    "fact_flight_delay_cause_2026": {
+      "estimated_bytes_processed": 113114000,
+      "estimated_gib": 0.10535
+    },
+    "mart_airport_monthly_performance_2026": {
+      "estimated_bytes_processed": 70733023,
+      "estimated_gib": 0.06588
+    },
+    "mart_carrier_monthly_performance_2026": {
+      "estimated_bytes_processed": 105050551,
+      "estimated_gib": 0.09784
+    },
+    "mart_route_monthly_performance_2026": {
+      "estimated_bytes_processed": 105050551,
+      "estimated_gib": 0.09784
+    },
+    "mart_carrier_monthly_delay_cause_2026": {
+      "estimated_bytes_processed": 26272720,
+      "estimated_gib": 0.02447
+    }
+  },
+  "live_analytical_queries_executed": false,
+  "historical_tables_rebuilt": false,
+  "february_merge_rerun": false,
+  "kpi_reconciliation_completed": false
+}
