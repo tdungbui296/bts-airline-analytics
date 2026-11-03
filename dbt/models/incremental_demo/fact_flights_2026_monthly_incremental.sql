@@ -1,9 +1,19 @@
 {% set run_mode = var('incremental_2026_mode', none) %}
 {% set selected_month = var('reprocess_month', none) %}
-{% set supported_months = ['2026-01', '2026-02'] %}
+{# Validate a canonical YYYY-MM month within the 2026 source contract. #}
+{% set valid_month_numbers = [
+    '01', '02', '03', '04', '05', '06',
+    '07', '08', '09', '10', '11', '12'
+] %}
+{% set month_is_valid = (
+    selected_month is string
+    and selected_month|length == 7
+    and selected_month[:5] == '2026-'
+    and selected_month[5:] in valid_month_numbers
+) %}
 {% set target_predicates = [] %}
 
-{% if run_mode == 'monthly' and selected_month in supported_months %}
+{% if run_mode == 'monthly' and month_is_valid %}
     {% set month_start = selected_month ~ '-01' %}
     {% set target_predicates = [
         "DBT_INTERNAL_DEST.flight_date >= DATE('" ~ month_start ~ "')",
@@ -58,9 +68,9 @@
 
     {% elif run_mode == 'monthly' %}
 
-        {% if selected_month not in supported_months %}
+        {% if not month_is_valid %}
             {{ exceptions.raise_compiler_error(
-                "Only 2026-01 and 2026-02 are authorized."
+                "Expected a valid YYYY-MM month within the 2026 source contract."
             ) }}
         {% endif %}
 
@@ -88,7 +98,7 @@
     from {{ ref('fact_flights_2026') }}
     where false
 
-{% elif run_mode == 'monthly' and selected_month in supported_months %}
+{% elif run_mode == 'monthly' and month_is_valid %}
 
     -- Select only the authorized month from the transformed source.
     -- The target-side predicates restrict MERGE matching to that month.

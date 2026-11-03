@@ -1,0 +1,49 @@
+services:
+  airflow:
+    volumes:
+    - type: bind
+      source: ../scripts
+      target: /opt/bts/scripts
+      read_only: true
+    - type: bind
+      source: ../data/raw/2026
+      target: /opt/bts/data/raw/2026
+      read_only: false
+    - type: bind
+      source: ../data/processed/2026
+      target: /opt/bts/data/processed/2026
+      read_only: false
+    - type: bind
+      source: ../data/load/2026
+      target: /opt/bts/data/load/2026
+      read_only: false
+    - type: bind
+      source: ../evidence/source
+      target: /opt/bts/evidence/source
+      read_only: false
+    - type: bind
+      source: ../evidence/bigquery/monthly_ingestion
+      target: /opt/bts/evidence/bigquery/monthly_ingestion
+      read_only: false
+    - type: bind
+      source: ../evidence/bigquery/monthly_processing
+      target: /opt/bts/evidence/bigquery/monthly_processing
+      read_only: false
+    - type: bind
+      source: ../config/bts_core_columns.txt
+      target: /opt/bts/config/bts_core_columns.txt
+      read_only: true
+    - type: bind
+      source: ../evidence/dbt/monthly_runs
+      target: /opt/bts/evidence/dbt/monthly_runs
+      read_only: false
+    - type: volume
+      source: bts_airflow_metadata_2026_external
+      target: /opt/bts/persistent-airflow-metadata
+      read_only: false
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/bts/persistent-airflow-metadata/airflow.db
+volumes:
+  bts_airflow_metadata_2026_external:
+    external: true
+    name: bts-airflow-metadata-2026
