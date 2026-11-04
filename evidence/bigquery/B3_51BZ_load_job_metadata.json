@@ -1,0 +1,33 @@
+{
+  "checkpoint": "B3.51BZ",
+  "verified_at_utc": "2026-11-02T09:38:49.700411+00:00",
+  "project": "tdb-dbt-bigquery-portfolio",
+  "verification_type": "metadata_only",
+  "load_jobs": [
+    {
+      "month": "2026-01",
+      "job_id": "bts_2026_01_41236900c1e73110",
+      "job_type": "load",
+      "state": "DONE",
+      "output_rows": 544003,
+      "input_files": 1,
+      "destination": "tdb-dbt-bigquery-portfolio.raw_bts.flights_2026",
+      "location": "asia-southeast1",
+      "error_result": null
+    },
+    {
+      "month": "2026-02",
+      "job_id": "bts_2026_02_4daa3cc9c55ae547",
+      "job_type": "load",
+      "state": "DONE",
+      "output_rows": 515037,
+      "input_files": 1,
+      "destination": "tdb-dbt-bigquery-portfolio.raw_bts.flights_2026",
+      "location": "asia-southeast1",
+      "error_result": null
+    }
+  ],
+  "raw_table_rows": 1059040,
+  "raw_table_columns": 51,
+  "limitation": "Job metadata confirms completed loads and counts. It does not independently verify row-level reporting period, duplicate flight keys, or source-file bytes."
+}

@@ -1,0 +1,24 @@
+B3.51DI unified February fixture
+PARENT_RUN_ID: b351di_february_fixture_20261103
+2026-11-03T15:52:24.566268Z [info     ] creating dag run               [airflow.serialization.definitions.dag] loc=dag.py:615 logical_date=None partition_key=None run_after=datetime.datetime(2026, 11, 3, 15, 52, 24, 555104, tzinfo=Timezone('UTC')) run_id=b351di_february_fixture_20261103
+     |                       |                       |                     |                   |          | last_scheduling_decis |              |          |            |        |                     
+conf | dag_id                | dag_run_id            | data_interval_start | data_interval_end | end_date | ion                   | logical_date | run_type | start_date | state  | triggering_user_name
+=====+=======================+=======================+=====================+===================+==========+=======================+==============+==========+============+========+=====================
+{}   | bts_2026_monthly_unif | b351di_february_fixtu | None                | None              | None     | None                  | None         | manual   | None       | queued | airflow             
+     | ied                   | re_20261103           |                     |                   |          |                       |              |          |            |        |                     
+                                                                                                                                                                                                        
+
+MONITOR RESULTS
+MONITOR: parent=queued | prepare=NOT_STARTED | ingest=NOT_STARTED | readiness=NOT_STARTED | dbt=NOT_STARTED
+MONITOR: parent=running | prepare=running | ingest=NOT_STARTED | readiness=NOT_STARTED | dbt=NOT_STARTED
+MONITOR: parent=running | prepare=success | ingest=NOT_STARTED | readiness=NOT_STARTED | dbt=NOT_STARTED
+MONITOR: parent=running | prepare=success | ingest=success | readiness=NOT_STARTED | dbt=NOT_STARTED
+MONITOR: parent=running | prepare=success | ingest=success | readiness=NOT_STARTED | dbt=success
+MONITOR: parent=success | prepare=success | ingest=success | readiness=NOT_STARTED | dbt=success
+CHILD_TASK_VERIFICATION_PASS: parent 9
+CHILD_TASK_VERIFICATION_PASS: prepare 4
+CHILD_TASK_VERIFICATION_PASS: ingest 4
+CHILD_TASK_VERIFICATION_PASS: dbt 5
+THREE_CHILD_DAGS_SUCCESS_PASS
+READINESS_CHILD_NOT_TRIGGERED_PASS
+UNIFIED_FEBRUARY_FIXTURE_EXECUTION_PASS

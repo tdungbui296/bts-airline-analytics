@@ -1,0 +1,30 @@
+{
+    "checkpoint":  "B3.51BF",
+    "recorded_at_utc":  "2026-11-02T08:05:36.918648+00:00",
+    "project":  "tdb-dbt-bigquery-portfolio",
+    "job_id":  "de683c78-e93a-4559-b507-3d9138268825",
+    "source_comparison":  "2026 incremental fact vs historical marts",
+    "important_limitation":  "Absence from historical marts does not prove absence from the historical airport dimension.",
+    "sql":  "\nWITH historical_airports AS (\n    SELECT airport_id FROM `tdb-dbt-bigquery-portfolio.dbt_dev.mart_airport_monthly_performance`\n    WHERE airport_id IS NOT NULL\n\n    UNION DISTINCT\n\n    SELECT origin_airport_id AS airport_id FROM `tdb-dbt-bigquery-portfolio.dbt_dev.mart_route_monthly_performance`\n    WHERE origin_airport_id IS NOT NULL\n\n    UNION DISTINCT\n\n    SELECT destination_airport_id AS airport_id FROM `tdb-dbt-bigquery-portfolio.dbt_dev.mart_route_monthly_performance`\n    WHERE destination_airport_id IS NOT NULL\n),\nrecent_usage AS (\n    SELECT\n        origin_airport_id AS airport_id,\n        COUNT(*) AS origin_rows,\n        0 AS destination_rows\n    FROM `tdb-dbt-bigquery-portfolio.dbt_dev.fact_flights_2026_monthly_incremental`\n    WHERE origin_airport_id IS NOT NULL\n    GROUP BY 1\n\n    UNION ALL\n\n    SELECT\n        destination_airport_id AS airport_id,\n        0 AS origin_rows,\n        COUNT(*) AS destination_rows\n    FROM `tdb-dbt-bigquery-portfolio.dbt_dev.fact_flights_2026_monthly_incremental`\n    WHERE destination_airport_id IS NOT NULL\n    GROUP BY 1\n)\nSELECT\n    r.airport_id,\n    SUM(r.origin_rows) AS origin_rows,\n    SUM(r.destination_rows) AS destination_rows\nFROM recent_usage r\nWHERE NOT EXISTS (\n    SELECT 1\n    FROM historical_airports h\n    WHERE h.airport_id = r.airport_id\n)\nGROUP BY r.airport_id\nORDER BY r.airport_id\n",
+    "dry_run_bytes":  19238128,
+    "maximum_bytes_billed":  50000000,
+    "actual_bytes_processed":  19238128,
+    "actual_bytes_billed":  31457280,
+    "candidate_airports":  [
+                               {
+                                   "airport_id":  13121,
+                                   "origin_rows":  25,
+                                   "destination_rows":  26
+                               },
+                               {
+                                   "airport_id":  14006,
+                                   "origin_rows":  9,
+                                   "destination_rows":  10
+                               },
+                               {
+                                   "airport_id":  14802,
+                                   "origin_rows":  51,
+                                   "destination_rows":  52
+                               }
+                           ]
+}

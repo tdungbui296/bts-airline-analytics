@@ -1,0 +1,43 @@
+MOUNTED_MODEL_HASH_PASS
+NORMAL_1GB_QUERY_CAP_PASS
+2026-11-02T08:18:08.491411Z [warning  ] No project ID could be determined. Consider running `gcloud config set project` or setting the GOOGLE_CLOUD_PROJECT environment variable [google.auth._default] loc=_default.py:740
+TOTAL_LOGICAL_STORAGE_GIB: 5.48911
+REPORTING_VIEW_DESTINATION_AVAILABLE
+
+[1] Validate dbt model selection
+[0m08:18:17  Running with dbt=1.12.0
+[0m08:18:19  Registered adapter: bigquery=1.12.0
+[0m08:18:21  Found 28 models, 214 data tests, 1 seed, 2 sources, 564 macros
+{"name": "dim_airport_reporting", "resource_type": "model", "package_name": "bts_airline_analytics", "original_file_path": "models/marts/core/dim_airport_reporting.sql", "unique_id": "model.bts_airline_analytics.dim_airport_reporting", "alias": "dim_airport_reporting", "config": {"enabled": true, "alias": null, "schema": null, "database": null, "tags": [], "meta": {}, "group": null, "static_analysis": null, "materialized": "view", "incremental_strategy": null, "batch_size": null, "lookback": 1, "begin": null, "persist_docs": {}, "post-hook": [], "pre-hook": [], "quoting": {}, "column_types": {}, "full_refresh": null, "unique_key": null, "on_schema_change": "ignore", "on_configuration_change": "apply", "grants": {}, "packages": [], "docs": {"show": true, "node_color": null}, "contract": {"enforced": false, "alias_types": true}, "event_time": null, "concurrent_batches": null, "access": "protected", "freshness": null, "on_error": null, "latest_version_pointer": {"enabled": null, "alias": null}}, "tags": [], "depends_on": {"macros": [], "nodes": ["model.bts_airline_analytics.dim_airport"]}, "direct_parents": ["model.bts_airline_analytics.dim_airport"]}
+
+SINGLE_VIEW_SELECTION_PASS
+ORIGINAL_AIRPORT_TABLE_NOT_SELECTED
+NO_INCREMENTAL_MODEL_SELECTED
+
+[2] Create reporting view through dbt
+[0m08:18:23  Running with dbt=1.12.0
+[0m08:18:24  Registered adapter: bigquery=1.12.0
+[0m08:18:26  Found 28 models, 214 data tests, 1 seed, 2 sources, 564 macros
+[0m08:18:26  
+[0m08:18:26  Concurrency: 4 threads (target='dev')
+[0m08:18:26  
+[0m08:18:28  1 of 1 START sql view model dbt_dev.dim_airport_reporting ...................... [RUN]
+[0m08:18:29  1 of 1 OK created sql view model dbt_dev.dim_airport_reporting ................. [[32mCREATE VIEW (0 processed)[0m in 1.34s]
+[0m08:18:29  
+[0m08:18:29  Finished running 1 view model in 0 hours 0 minutes and 2.69 seconds (2.69s).
+[0m08:18:29  
+[0m08:18:29  [32mCompleted successfully[0m
+[0m08:18:29  
+[0m08:18:29  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=1
+
+WARNING:google.auth._default:No project ID could be determined. Consider running `gcloud config set project` or setting the GOOGLE_CLOUD_PROJECT environment variable
+
+
+[3] Verify deployed metadata
+DEPLOYED_VIEW: tdb-dbt-bigquery-portfolio.dbt_dev.dim_airport_reporting
+VIEW_COLUMN_COUNT: 5
+VIEW_METADATA_PASS
+NO_HISTORICAL_TABLE_REBUILD
+NO_INCREMENTAL_MERGE
+NO_POWER_BI_REFRESH
+B3_51BJ_PASS
