@@ -1,0 +1,41 @@
+{
+    "checkpoint":  "B3.51BI",
+    "recorded_at_utc":  "2026-11-02T08:13:43.616361+00:00",
+    "job_id":  "46e7f7f4-8ccd-46ad-a256-d86b76f50718",
+    "sql":  "\nSELECT\n    x.airport_id,\n    x.airport_code,\n    x.city_market_id,\n    x.city_name,\n    x.state_code,\n    COUNT(*) AS occurrences\nFROM `tdb-dbt-bigquery-portfolio.raw_bts.flights_2026` AS r\nCROSS JOIN UNNEST([\n    STRUCT(\n        SAFE_CAST(r.OriginAirportID AS INT64) AS airport_id,\n        CAST(r.Origin AS STRING) AS airport_code,\n        SAFE_CAST(r.OriginCityMarketID AS INT64) AS city_market_id,\n        CAST(r.OriginCityName AS STRING) AS city_name,\n        CAST(r.OriginState AS STRING) AS state_code\n    ),\n    STRUCT(\n        SAFE_CAST(r.DestAirportID AS INT64) AS airport_id,\n        CAST(r.Dest AS STRING) AS airport_code,\n        SAFE_CAST(r.DestCityMarketID AS INT64) AS city_market_id,\n        CAST(r.DestCityName AS STRING) AS city_name,\n        CAST(r.DestState AS STRING) AS state_code\n    )\n]) AS x\nWHERE x.airport_id IN (13121, 14006, 14802)\nGROUP BY 1, 2, 3, 4, 5\nORDER BY airport_id, occurrences DESC, airport_code\n",
+    "dry_run_bytes":  84925928,
+    "maximum_bytes_billed":  200000000,
+    "actual_bytes_processed":  84925928,
+    "actual_bytes_billed":  84934656,
+    "airport_variants":  [
+                             {
+                                 "airport_id":  13121,
+                                 "airport_code":  "LWB",
+                                 "city_market_id":  33121,
+                                 "city_name":  "Lewisburg, WV",
+                                 "state_code":  "WV",
+                                 "occurrences":  51
+                             },
+                             {
+                                 "airport_id":  14006,
+                                 "airport_code":  "PAH",
+                                 "city_market_id":  34006,
+                                 "city_name":  "Paducah, KY",
+                                 "state_code":  "KY",
+                                 "occurrences":  19
+                             },
+                             {
+                                 "airport_id":  14802,
+                                 "airport_code":  "SHD",
+                                 "city_market_id":  34802,
+                                 "city_name":  "Staunton, VA",
+                                 "state_code":  "VA",
+                                 "occurrences":  103
+                             }
+                         ],
+    "endpoint_appearances_by_id":  {
+                                       "13121":  51,
+                                       "14006":  19,
+                                       "14802":  103
+                                   }
+}
