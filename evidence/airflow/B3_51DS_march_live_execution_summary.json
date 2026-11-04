@@ -1,0 +1,163 @@
+{
+  "pipeline": "BTS 2026 monthly live pipeline",
+  "month": "2026-03",
+  "captured_at_utc": "2026-11-04T06:25:25.628152+00:00",
+  "source": "Airflow CLI metadata",
+  "source_commit": "273ce32",
+  "successful_dag_runs": 4,
+  "successful_task_instances": 18,
+  "runs": [
+    {
+      "stage": "PREPARATION",
+      "dag_id": "bts_2026_monthly_prepare",
+      "run_id": "b351ds_march_prepare_recovered_20261104",
+      "state": "success",
+      "start_date": "2026-11-04T04:25:24.124377+00:00",
+      "end_date": "2026-11-04T04:25:39.126692+00:00",
+      "task_count": 4,
+      "tasks": [
+        {
+          "task_id": "execute_preparation",
+          "state": "success",
+          "start_date": "2026-11-04T04:25:33.216130+00:00",
+          "end_date": "2026-11-04T04:25:38.046897+00:00"
+        },
+        {
+          "task_id": "report_preparation",
+          "state": "success",
+          "start_date": "2026-11-04T04:25:38.186086+00:00",
+          "end_date": "2026-11-04T04:25:38.330843+00:00"
+        },
+        {
+          "task_id": "validate_container_mounts",
+          "state": "success",
+          "start_date": "2026-11-04T04:25:32.148316+00:00",
+          "end_date": "2026-11-04T04:25:32.300880+00:00"
+        },
+        {
+          "task_id": "validate_request",
+          "state": "success",
+          "start_date": "2026-11-04T04:25:24.881935+00:00",
+          "end_date": "2026-11-04T04:25:31.246996+00:00"
+        }
+      ]
+    },
+    {
+      "stage": "INGESTION",
+      "dag_id": "bts_2026_monthly_ingest",
+      "run_id": "b351ds_march_ingest_authorized_20261104",
+      "state": "success",
+      "start_date": "2026-11-04T05:16:52.301514+00:00",
+      "end_date": "2026-11-04T05:17:14.627765+00:00",
+      "task_count": 4,
+      "tasks": [
+        {
+          "task_id": "authorize_request",
+          "state": "success",
+          "start_date": "2026-11-04T05:16:52.566164+00:00",
+          "end_date": "2026-11-04T05:16:52.972905+00:00"
+        },
+        {
+          "task_id": "run_ingestion_or_fixture",
+          "state": "success",
+          "start_date": "2026-11-04T05:16:54.583263+00:00",
+          "end_date": "2026-11-04T05:17:13.293939+00:00"
+        },
+        {
+          "task_id": "validate_handoff",
+          "state": "success",
+          "start_date": "2026-11-04T05:17:13.671483+00:00",
+          "end_date": "2026-11-04T05:17:13.816335+00:00"
+        },
+        {
+          "task_id": "verify_candidate",
+          "state": "success",
+          "start_date": "2026-11-04T05:16:53.515370+00:00",
+          "end_date": "2026-11-04T05:16:53.730156+00:00"
+        }
+      ]
+    },
+    {
+      "stage": "READINESS",
+      "dag_id": "bts_monthly_readiness_gate",
+      "run_id": "b351ds_march_readiness_20261104",
+      "state": "success",
+      "start_date": "2026-11-04T05:35:37.613758+00:00",
+      "end_date": "2026-11-04T05:35:53.273505+00:00",
+      "task_count": 5,
+      "tasks": [
+        {
+          "task_id": "check_monthly_ingestion",
+          "state": "success",
+          "start_date": "2026-11-04T05:35:37.807457+00:00",
+          "end_date": "2026-11-04T05:35:38.011456+00:00"
+        },
+        {
+          "task_id": "check_monthly_source_quality",
+          "state": "success",
+          "start_date": "2026-11-04T05:35:42.048097+00:00",
+          "end_date": "2026-11-04T05:35:46.526557+00:00"
+        },
+        {
+          "task_id": "reconcile_raw_months",
+          "state": "success",
+          "start_date": "2026-11-04T05:35:47.804726+00:00",
+          "end_date": "2026-11-04T05:35:51.308483+00:00"
+        },
+        {
+          "task_id": "report_candidate",
+          "state": "success",
+          "start_date": "2026-11-04T05:35:52.358269+00:00",
+          "end_date": "2026-11-04T05:35:52.546579+00:00"
+        },
+        {
+          "task_id": "verify_bigquery_load",
+          "state": "success",
+          "start_date": "2026-11-04T05:35:38.849228+00:00",
+          "end_date": "2026-11-04T05:35:40.986270+00:00"
+        }
+      ]
+    },
+    {
+      "stage": "DBT_MERGE",
+      "dag_id": "bts_2026_monthly_dbt",
+      "run_id": "b351ds_march_dbt_authorized_20261104",
+      "state": "success",
+      "start_date": "2026-11-04T06:06:01.934148+00:00",
+      "end_date": "2026-11-04T06:07:03.385636+00:00",
+      "task_count": 5,
+      "tasks": [
+        {
+          "task_id": "authorize_request",
+          "state": "success",
+          "start_date": "2026-11-04T06:06:02.122871+00:00",
+          "end_date": "2026-11-04T06:06:02.326889+00:00"
+        },
+        {
+          "task_id": "run_incremental_merge",
+          "state": "success",
+          "start_date": "2026-11-04T06:06:33.478829+00:00",
+          "end_date": "2026-11-04T06:06:59.089624+00:00"
+        },
+        {
+          "task_id": "run_upstream",
+          "state": "success",
+          "start_date": "2026-11-04T06:06:14.891160+00:00",
+          "end_date": "2026-11-04T06:06:32.682722+00:00"
+        },
+        {
+          "task_id": "verify_completion",
+          "state": "success",
+          "start_date": "2026-11-04T06:06:59.355885+00:00",
+          "end_date": "2026-11-04T06:07:02.598283+00:00"
+        },
+        {
+          "task_id": "verify_readiness",
+          "state": "success",
+          "start_date": "2026-11-04T06:06:03.165377+00:00",
+          "end_date": "2026-11-04T06:06:14.136883+00:00"
+        }
+      ]
+    }
+  ]
+}
