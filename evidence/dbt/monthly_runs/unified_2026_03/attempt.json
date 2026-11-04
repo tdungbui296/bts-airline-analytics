@@ -1,0 +1,8 @@
+{
+  "airflow_run_id": "b351dr_march_live_20261104",
+  "automatic_retry_permitted": false,
+  "created_at_utc": "2026-11-04T01:47:03.318484+00:00",
+  "month": "2026-03",
+  "stage": "unified_monthly_pipeline",
+  "state": "RESERVED_BEFORE_PREPARATION"
+}

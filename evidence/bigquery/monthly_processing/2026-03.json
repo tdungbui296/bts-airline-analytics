@@ -1,0 +1,9 @@
+{
+  "month": "2026-03",
+  "status": "DONE",
+  "dbt_invocation_id": "23d0e9de-ec17-4cc3-9101-ff30ecb94017",
+  "verified_fact_rows": 612102,
+  "ingestion_job_id": "bts_2026_03_raw_ingest_v1",
+  "verification_job_id": "d47e9aa5-4165-47d5-ba66-39c998f8a6d1",
+  "reporting_published": false
+}

@@ -2,6 +2,10 @@ services:
   airflow:
     volumes:
     - type: bind
+      source: ../analysis/profiling
+      target: /opt/bts/analysis/profiling
+      read_only: false
+    - type: bind
       source: ../scripts
       target: /opt/bts/scripts
       read_only: true

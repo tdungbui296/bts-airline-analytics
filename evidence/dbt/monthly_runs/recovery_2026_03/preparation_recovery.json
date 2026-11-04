@@ -1,0 +1,15 @@
+{
+  "month": "2026-03",
+  "status": "LOCAL_PREPARATION_RECOVERED",
+  "recovery_type": "manual_receipt_reconstruction_after_interrupted_run",
+  "recorded_at_utc": "2026-11-04T04:16:47.474438+00:00",
+  "original_processed_sha256": "C2636F9EDBFD96FD89D10C5C91362635D4E5C8E99834B34DC897BCE72A89C298",
+  "original_failed_journal_sha256": "D7C474F6008098EDD4F87F08F976804FF4A60E9AD886A010811460E57D9E0EAD",
+  "source_zip_sha256": "C0864D5DABD522517976E29BB81F0C094D114E3E0E40CD51BC5A238AE4292B9D",
+  "source_rows": 612102,
+  "decompressed_replay_match_previously_verified": true,
+  "original_processed_file_preserved": true,
+  "original_failed_journal_preserved": true,
+  "bigquery_load_executed": false,
+  "dbt_merge_executed": false
+}
