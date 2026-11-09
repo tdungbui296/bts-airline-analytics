@@ -1,0 +1,2 @@
+# Include authored dbt SQL in GitHub language statistics
+dbt/**/*.sql linguist-language=SQL linguist-detectable
