@@ -174,6 +174,12 @@ The report combines historical marts with 2026 reporting views so users can anal
 
 The Executive Overview dashboard is previewed above.
 
+### Power BI Semantic Model
+
+The Power BI semantic model connects monthly carrier, route, airport, and delay-cause analytical marts to shared dimensions, including role-specific origin and destination airport dimensions. One-to-many relationships support filtering and consistent KPI calculations across the four analytical report pages.
+
+![Power BI Semantic Model](powerbi/screenshots/06_semantic_model.png)
+
 ### Explore the Other Dashboard Pages
 
 <details>
