@@ -388,3 +388,21 @@ No private credentials, access tokens, or billing details are required in the pu
 ---
 
 **Portfolio focus:** Business analysis, trusted analytical modeling, operational insight generation, and practical workflow automation.
+
+## Airflow Orchestration Evidence
+
+The Dockerized Apache Airflow environment contains 11 manually triggered DAGs covering data preparation, ingestion, dbt execution, readiness checks, reporting, and controlled failure/recovery testing.
+
+### Registered DAGs
+
+The DAG overview shows the registered workflows and their historical execution states. It includes successful runs alongside an intentional failure drill and a previously failed unified workflow run.
+
+![Airflow overview showing 11 registered BTS DAGs](airflow/screenshots/01_dag_overview.png)
+
+### Successful February 2026 Incremental Workflow
+
+On October 29, 2026, the manually triggered `bts_2026_02_integrated_incremental` DAG completed successfully with eight successful task instances: ingestion validation, execution authorization, BigQuery baseline validation, upstream transformations, MERGE cost estimation, February MERGE, incremental result verification, and reporting handoff.
+
+![Successful eight-task Airflow incremental workflow](airflow/screenshots/02_incremental_success.png)
+
+The Airflow screenshots demonstrate task orchestration and execution status. Separate dbt and BigQuery evidence in this repository supports the underlying incremental-processing results.
